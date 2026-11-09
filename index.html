@@ -1,0 +1,1226 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>KEYENCE 感測技術互動資訊圖表 GA-245＋GH-613 對 EX-V02＋EX-110V</title>
+<script src="https://artifactcdn.diabrowser.engineering/ajax/libs/Chart.js/chart.umd.js"></script>
+<style>
+:root{
+  --paper:#f6f3ec; --card:#fffdf8; --ink:#16181b; --ink2:#43474d; --muted:#7a7f86; --line:#ddd6c6; --grid:#ebe5d8;
+  --ga:#c2410c; --ga-soft:#fbe6da; --ex:#1d6fa3; --ex-soft:#dcebf5;
+  --good:#2f7d32; --warn:#b26a00; --bad:#b3261e;
+  --mono:"Cascadia Code","Cascadia Mono",Consolas,"SFMono-Regular",monospace;
+  --sans:"Microsoft JhengHei UI","Microsoft JhengHei","PingFang TC","Noto Sans TC","Segoe UI",sans-serif;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--sans);line-height:1.6;font-size:15px}
+body::before{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;
+  background-image:linear-gradient(var(--grid) 1px,transparent 1px),linear-gradient(90deg,var(--grid) 1px,transparent 1px);
+  background-size:32px 32px;opacity:.55}
+a{color:var(--ex)}
+.mono{font-family:var(--mono)}
+/* nav */
+nav{position:sticky;top:0;z-index:20;background:rgba(246,243,236,.94);backdrop-filter:blur(6px);border-bottom:2px solid var(--ink)}
+nav .in{max-width:1240px;margin:0 auto;display:flex;gap:4px;overflow-x:auto;padding:8px 18px;scrollbar-width:none}
+nav a{flex:none;text-decoration:none;color:var(--ink2);font-size:13.5px;padding:6px 12px;border:1.5px solid transparent;white-space:nowrap}
+nav a b{font-family:var(--mono);color:var(--muted);margin-right:4px;font-weight:600}
+nav a.on,nav a:hover{border-color:var(--ink);color:var(--ink);background:var(--card)}
+.wrap{max-width:1240px;margin:0 auto;padding:28px 18px 96px}
+/* hero */
+.hero{display:grid;grid-template-columns:minmax(0,1.35fr) minmax(0,1fr);gap:22px;align-items:stretch}
+.hero-l{border:2px solid var(--ink);background:var(--card);padding:28px 30px;box-shadow:7px 7px 0 var(--ink);position:relative}
+.eyebrow{font-family:var(--mono);font-size:12px;letter-spacing:.14em;color:var(--muted);text-transform:uppercase}
+h1{font-size:clamp(26px,3.4vw,42px);line-height:1.15;margin:8px 0 14px;font-weight:900;letter-spacing:-.01em}
+h1 .ga{color:var(--ga)} h1 .ex{color:var(--ex)} h1 .vs{font-family:var(--mono);font-size:.55em;color:var(--muted);padding:0 .25em;vertical-align:middle}
+.hero-l p{margin:0;color:var(--ink2);max-width:640px}
+.hero-l .key{margin-top:16px;padding:12px 14px;border-left:5px solid var(--ink);background:#fff6d8;font-size:14.5px}
+.hero-r{display:grid;grid-template-rows:1fr 1fr;gap:14px}
+.sys{border:2px solid var(--ink);background:var(--card);padding:16px 18px;position:relative;overflow:hidden}
+.sys::after{content:attr(data-tag);position:absolute;right:-6px;top:6px;font-family:var(--mono);font-size:44px;font-weight:800;opacity:.08}
+.sys.ga{border-left:12px solid var(--ga)} .sys.ex{border-left:12px solid var(--ex)}
+.sys h2{margin:0;font-family:var(--mono);font-size:18px}
+.sys .role{font-weight:700;font-size:14px} .sys.ga .role{color:var(--ga)} .sys.ex .role{color:var(--ex)}
+.kp{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin-top:10px}
+.kp div{border-top:1.5px solid var(--ink);padding-top:4px}
+.kp b{display:block;font-family:var(--mono);font-size:19px;line-height:1.2}
+.kp span{font-size:11.5px;color:var(--muted)}
+/* sections */
+section{margin-top:56px;scroll-margin-top:64px}
+.sh{display:flex;align-items:flex-end;gap:14px;border-bottom:2px solid var(--ink);padding-bottom:8px;margin-bottom:18px;flex-wrap:wrap}
+.sh .num{font-family:var(--mono);font-size:13px;background:var(--ink);color:var(--paper);padding:3px 9px}
+.sh h3{margin:0;font-size:24px;font-weight:900}
+.sh .sub{color:var(--muted);font-size:13.5px;margin-left:auto}
+.grid2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px}
+.grid3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}
+.card{background:var(--card);border:2px solid var(--ink);padding:18px 20px;min-width:0}
+.card h4{margin:0 0 6px;font-size:17px}
+.card.ga h4{color:var(--ga)} .card.ex h4{color:var(--ex)}
+.card p{margin:6px 0;color:var(--ink2)}
+.card ul{margin:6px 0;padding-left:20px;color:var(--ink2)} .card li{margin:3px 0}
+.chart{position:relative;width:100%;height:clamp(240px,34vh,340px);overflow:hidden;min-width:0}
+.chart.tall{height:clamp(320px,46vh,460px)}
+.chart.short{height:clamp(190px,26vh,240px)}
+.cap{font-size:12px;color:var(--muted);margin-top:6px}
+.pill{display:inline-block;font-family:var(--mono);font-size:11.5px;padding:1px 8px;border:1.5px solid currentColor;border-radius:999px;margin-right:4px}
+.pill.ga{color:var(--ga)} .pill.ex{color:var(--ex)} .pill.sim{color:var(--muted)} .pill.off{color:var(--good)}
+.note{border-left:4px solid var(--ink);background:#fff6d8;padding:9px 13px;font-size:13.5px;margin-top:12px;color:var(--ink2)}
+.note.red{border-color:var(--bad);background:#fbe9e7}
+.ctl{display:flex;flex-wrap:wrap;gap:10px 18px;align-items:center;margin:10px 0 4px;font-size:13.5px}
+.ctl label{display:flex;align-items:center;gap:8px}
+.ctl input[type=range]{accent-color:var(--ink);width:150px}
+.ctl output{font-family:var(--mono);font-weight:700;min-width:64px}
+.seg{display:inline-flex;border:1.5px solid var(--ink)}
+.seg button{font:inherit;font-size:13px;border:0;background:var(--card);padding:5px 12px;cursor:pointer;border-right:1.5px solid var(--ink)}
+.seg button:last-child{border-right:0}
+.seg button.on{background:var(--ink);color:var(--paper)}
+/* svg diagrams */
+.diagram{width:100%;height:auto;display:block;margin:6px 0 4px}
+/* table */
+.tbl-wrap{overflow-x:auto;border:2px solid var(--ink);background:var(--card)}
+table{width:100%;border-collapse:collapse;font-size:14px}
+th,td{padding:9px 12px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}
+thead th{background:var(--ink);color:var(--paper);position:sticky;top:0}
+thead th.ga{background:var(--ga)} thead th.ex{background:var(--ex)}
+tbody th{background:#f7f3ea;white-space:nowrap;font-weight:700;width:150px}
+tbody tr:hover td{background:#fbf5e6}
+tr.hide{display:none}
+.src{font-size:11px;color:var(--muted);font-family:var(--mono)}
+/* accuracy */
+.acc{display:grid;grid-template-columns:minmax(0,340px) minmax(0,1fr);gap:18px}
+.field{margin:12px 0}
+.field .lbl{display:flex;justify-content:space-between;font-size:13.5px;font-weight:700}
+.field .lbl output{font-family:var(--mono)}
+.field input[type=range]{width:100%;accent-color:var(--ex)}
+.field .hint{font-size:12px;color:var(--muted)}
+.verdict{margin-top:14px;border:2px solid var(--ink);padding:12px 14px}
+.verdict .big{font-family:var(--mono);font-size:30px;font-weight:800;line-height:1.1}
+.status{display:inline-flex;align-items:center;gap:6px;font-weight:800;font-size:14px;padding:3px 10px;border:2px solid currentColor;margin-top:6px}
+.status.good{color:var(--good)} .status.warn{color:var(--warn)} .status.bad{color:var(--bad)}
+/* modes */
+.modes{display:grid;grid-template-columns:repeat(15,minmax(0,1fr));gap:4px;margin-bottom:14px}
+.modes div{height:34px;border:1.5px solid var(--ink);display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:11px;background:var(--card);color:var(--muted)}
+.modes div.k{background:var(--ex);color:#fff;border-color:var(--ex);font-weight:700}
+.mode-ui{display:grid;grid-template-columns:minmax(0,260px) minmax(0,1fr);gap:18px}
+.mbtn{display:block;width:100%;text-align:left;font:inherit;background:var(--card);border:2px solid var(--ink);padding:10px 12px;margin-bottom:8px;cursor:pointer;transition:transform .12s,box-shadow .12s}
+.mbtn b{display:block;font-size:15px}
+.mbtn span{font-size:12px;color:var(--muted)}
+.mbtn:hover{transform:translate(-2px,-2px);box-shadow:2px 2px 0 var(--ink)}
+.mbtn.on{background:var(--ex);color:#fff;border-color:var(--ex)} .mbtn.on span{color:#e6f1f8}
+.readout{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin-top:10px}
+.readout div{border:1.5px solid var(--ink);padding:8px 10px;background:var(--card)}
+.readout b{display:block;font-family:var(--mono);font-size:20px}
+.readout span{font-size:11.5px;color:var(--muted)}
+.judge{font-family:var(--mono);font-weight:800;font-size:20px}
+.judge.HIGH{color:var(--bad)} .judge.LOW{color:var(--warn)} .judge.GO{color:var(--good)}
+/* selector */
+.q{margin-bottom:14px}
+.q .qt{font-weight:800;margin-bottom:6px}
+.opts{display:flex;flex-wrap:wrap;gap:8px}
+.opts button{font:inherit;font-size:13.5px;border:1.5px solid var(--ink);background:var(--card);padding:6px 12px;cursor:pointer}
+.opts button.on{background:var(--ink);color:var(--paper)}
+.rec{border:2px solid var(--ink);padding:16px 18px;background:var(--card);min-height:180px}
+.rec .who{font-family:var(--mono);font-size:22px;font-weight:800}
+.rec.ga{border-left:12px solid var(--ga)} .rec.ex{border-left:12px solid var(--ex)} .rec.both{border-left:12px solid var(--ink)} .rec.none{border-left:12px solid var(--muted)}
+.bar2{display:flex;height:12px;border:1.5px solid var(--ink);margin:10px 0 4px}
+.bar2 i{display:block;height:100%}
+footer{margin-top:56px;border-top:2px solid var(--ink);padding-top:14px;font-size:12.5px;color:var(--ink2)}
+footer li{margin:3px 0}
+.legend{display:flex;gap:16px;font-size:13px;margin:4px 0 6px;flex-wrap:wrap}
+.legend span{display:inline-flex;align-items:center;gap:6px}
+.legend i{width:14px;height:4px;display:inline-block;border-radius:2px}
+@media (max-width:900px){
+  .hero,.grid2,.acc,.mode-ui{grid-template-columns:minmax(0,1fr)}
+  .grid3{grid-template-columns:minmax(0,1fr)}
+  .modes{grid-template-columns:repeat(5,minmax(0,1fr))}
+  tbody th{white-space:normal;width:100px}
+  .sh .sub{margin-left:0}
+}
+@media print{
+  @page{size:A4 portrait;margin:11mm}
+  nav{display:none} body::before{display:none}
+  .wrap{padding:0} .hero-l{box-shadow:none}
+  section{break-inside:avoid-page;margin-top:24px}
+  .card,.rec,.tbl-wrap{break-inside:avoid}
+  tr.hide{display:table-row}
+  .chart{height:240px}
+  *{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+}
+</style>
+</head>
+<body>
+
+<nav><div class="in" id="nav">
+  <a href="#s0"><b>00</b>總覽</a>
+  <a href="#s1"><b>01</b>物理原理</a>
+  <a href="#s2"><b>02</b>規格參數</a>
+  <a href="#s3"><b>03</b>微米級精度控制</a>
+  <a href="#s4"><b>04</b>15 種量測模式</a>
+  <a href="#s5"><b>05</b>技術雷達</a>
+  <a href="#s6"><b>06</b>工程選型邏輯</a>
+  <a href="#s7"><b>07</b>應用與驗收</a>
+  <a href="#s8"><b>08</b>X/Y/Z 三軸</a>
+  <a href="#s9"><b>09</b>3D 軌跡合成</a>
+  <a href="#s10"><b>10</b>相鄰安裝距離</a>
+  <a href="#s11"><b>11</b>三軸加速度選型</a>
+  <a href="#s12"><b>12</b>加速度計與陀螺儀</a>
+</div></nav>
+
+<div class="wrap">
+
+<!-- 00 HERO -->
+<section id="s0" style="margin-top:6px">
+<div class="hero">
+  <div class="hero-l">
+    <div class="eyebrow">KEYENCE · 深度技術比較 · 互動資訊圖表</div>
+    <h1><span class="ga">GA-245＋GH-613</span><span class="vs">VS</span><span class="ex">EX-V02＋EX-110V</span></h1>
+    <p>兩組都是「感測頭＋放大器」，但量的是不同的物理量。GA 感測<b>結構傳來的加速度（振動／衝擊）</b>，輸出「有沒有異常」；EX-V 感測<b>感測頭到金屬目標的距離</b>，輸出「移動了多少 µm」。兩者互補，不能互換，也不能單憑數字大小比較誰比較「準」。</p>
+    <div class="key">選型分界只有一題：你要抓的是 <b style="color:var(--ga)">異常事件</b>，還是要拿到 <b style="color:var(--ex)">有單位、可校驗的位移數值</b>？</div>
+  </div>
+  <div class="hero-r">
+    <div class="sys ga" data-tag="GA">
+      <h2>GA-245U (GA-245) ＋ GH-613</h2>
+      <div class="role">衝擊／振動檢知 · AC 供電 · 10 圈靈敏度轉盤</div>
+      <div class="kp">
+        <div><b>0.98 m/s²</b><span>最小檢測加速度 (≈0.1 G)</span></div>
+        <div><b>40 Hz–8 kHz</b><span>反應頻率 (−3 dB)</span></div>
+        <div><b>1 ms</b><span>固態輸出延遲</span></div>
+      </div>
+    </div>
+    <div class="sys ex" data-tag="EX">
+      <h2>EX-V02 ＋ EX-110V</h2>
+      <div class="role">渦電流位移量測 · 24 VDC · M10×18 mm 螺紋頭</div>
+      <div class="kp">
+        <div><b>0–2 mm</b><span>量測範圍</span></div>
+        <div><b>0.4 µm</b><span>解析度 (64 次平均)</span></div>
+        <div><b>±0.3%</b><span>線性度 F.S. ≈ ±6 µm</span></div>
+      </div>
+    </div>
+  </div>
+</div>
+</section>
+
+<!-- 01 PRINCIPLE -->
+<section id="s1">
+  <div class="sh"><span class="num">01</span><h3>物理原理</h3><span class="sub">量測對象不同，決定了一切規格的意義</span></div>
+  <div class="grid2">
+    <div class="card ga">
+      <h4>GA＋GH：加速度 → 振動位準 → 門檻判定</h4>
+      <svg class="diagram" viewBox="0 0 520 170" role="img" aria-label="GA 衝擊感測原理示意">
+        <rect x="10" y="110" width="210" height="40" fill="#eee7da" stroke="#16181b" stroke-width="1.5"/>
+        <text x="20" y="135" font-size="12" fill="#43474d">設備結構／軸承座</text>
+        <rect x="80" y="80" width="54" height="30" fill="#c2410c"/>
+        <text x="86" y="100" font-size="12" fill="#fff" font-family="monospace">GH-613</text>
+        <path d="M30 70 q10 -18 20 0 t20 0 t20 0" fill="none" stroke="#c2410c" stroke-width="2"/>
+        <text x="20" y="52" font-size="11" fill="#7a7f86">結構振動／衝擊傳遞</text>
+        <line x1="134" y1="95" x2="240" y2="95" stroke="#16181b" stroke-width="1.5" stroke-dasharray="4 3"/>
+        <rect x="240" y="65" width="120" height="60" fill="#fffdf8" stroke="#16181b" stroke-width="2"/>
+        <text x="252" y="88" font-size="12" font-family="monospace">GA-245U</text>
+        <text x="252" y="108" font-size="11" fill="#43474d">帶通 40Hz–8kHz</text>
+        <line x1="360" y1="95" x2="400" y2="95" stroke="#16181b" stroke-width="1.5"/>
+        <polygon points="400,90 410,95 400,100" fill="#16181b"/>
+        <text x="414" y="78" font-size="11.5">靈敏度門檻</text>
+        <text x="414" y="98" font-size="11.5" font-weight="700">NPN／繼電器</text>
+        <text x="414" y="118" font-size="11.5" fill="#43474d">類比位準輸出</text>
+      </svg>
+      <ul>
+        <li>感測頭鎖在<b>能傳遞振動的結構</b>上，量的是結構本身的加速度，不需要「目標物」。</li>
+        <li>放大器以 40 Hz–8 kHz 的頻帶處理訊號，再用 10 圈電位計設定靈敏度；超過即輸出 ON。</li>
+        <li>可設 ON 延遲 0–2 s 過濾短暫衝擊；OFF 延遲＝ON 設定時間＋65 ms。</li>
+      </ul>
+      <div class="ctl"><label>轉速 <input id="rpm" type="range" min="300" max="12000" step="100" value="1800"><output id="rpmO">1800 rpm</output></label><span id="rpmMsg" class="mono"></span></div>
+      <div class="chart short"><canvas id="cFreq"></canvas></div>
+      <div class="cap"><span class="pill sim">示意</span>帶通頻響曲線為依 −3 dB 點繪出的示意形狀，不是原廠實測曲線。拖動轉速可看 1 倍轉頻是否落在頻帶內，例如 1,800 rpm＝30 Hz，低於 40 Hz。</div>
+    </div>
+    <div class="card ex">
+      <h4>EX-V：高頻磁場 → 渦電流 → 距離</h4>
+      <svg class="diagram" viewBox="0 0 520 170" role="img" aria-label="EX-V 渦電流原理示意">
+        <rect x="30" y="50" width="70" height="70" fill="#1d6fa3"/>
+        <text x="37" y="90" font-size="12" fill="#fff" font-family="monospace">EX-110V</text>
+        <path d="M100 62 q40 23 0 46" fill="none" stroke="#1d6fa3" stroke-width="1.5"/>
+        <path d="M100 52 q62 33 0 66" fill="none" stroke="#1d6fa3" stroke-width="1.5" opacity=".6"/>
+        <path d="M100 44 q84 41 0 82" fill="none" stroke="#1d6fa3" stroke-width="1.5" opacity=".35"/>
+        <rect x="190" y="30" width="22" height="110" fill="#9aa1a8" stroke="#16181b" stroke-width="1.5"/>
+        <text x="216" y="40" font-size="11" fill="#43474d">金屬目標</text>
+        <ellipse cx="201" cy="85" rx="7" ry="20" fill="none" stroke="#c2410c" stroke-width="1.5" stroke-dasharray="3 2"/>
+        <text x="216" y="90" font-size="11" fill="#c2410c">渦電流</text>
+        <line x1="100" y1="150" x2="190" y2="150" stroke="#16181b"/>
+        <line x1="100" y1="144" x2="100" y2="156" stroke="#16181b"/><line x1="190" y1="144" x2="190" y2="156" stroke="#16181b"/>
+        <text x="122" y="166" font-size="11" font-family="monospace">間隙 d (0–2 mm)</text>
+        <rect x="300" y="55" width="110" height="60" fill="#fffdf8" stroke="#16181b" stroke-width="2"/>
+        <text x="312" y="78" font-size="12" font-family="monospace">EX-V02</text>
+        <text x="312" y="98" font-size="11" fill="#43474d">FLL 線性修正</text>
+        <line x1="410" y1="85" x2="440" y2="85" stroke="#16181b" stroke-width="1.5"/>
+        <polygon points="440,80 450,85 440,90" fill="#16181b"/>
+        <text x="454" y="70" font-size="11.5">±5 V 類比</text>
+        <text x="454" y="90" font-size="11.5" font-weight="700">HIGH/GO/LOW</text>
+        <text x="454" y="110" font-size="11.5" fill="#43474d">40k 次/秒</text>
+      </svg>
+      <ul>
+        <li>線圈產生高頻磁場，金屬目標內感應出渦電流，反過來改變線圈阻抗；阻抗變化對應距離。</li>
+        <li>原廠以 FLL 線性修正電路提升高頻磁場下的渦電流檢測能力，取樣最高 40,000 次／秒。</li>
+        <li>導電率與磁導率會改變感應量，所以<b>材質就是校正條件</b>。原廠規格以鐵（S45C、SS400，t=1 mm）為準。</li>
+      </ul>
+      <div class="ctl"><label>目標距離 <input id="gap" type="range" min="0" max="2" step="0.01" value="1.00"><output id="gapO">1.00 mm</output></label><span class="mono" id="gapMsg"></span></div>
+      <div class="chart short"><canvas id="cLin"></canvas></div>
+      <div class="cap"><span class="pill sim">示意</span>灰帶為線性度 ±0.3% F.S.（±6 µm）的容許包絡；曲線形狀是示意，實際誤差分布需實測。藍點為所選距離。</div>
+    </div>
+  </div>
+</section>
+
+<!-- 02 SPECS -->
+<section id="s2">
+  <div class="sh"><span class="num">02</span><h3>規格參數</h3><span class="sub">依 KEYENCE 台灣官網型號頁，2026-11 核對</span></div>
+  <div class="ctl" style="margin-top:0">
+    <div class="seg" id="specSeg">
+      <button class="on" data-f="all">全部</button><button data-f="m">量測性能</button><button data-f="o">輸出／判定</button><button data-f="e">電源／環境</button>
+    </div>
+  </div>
+  <div class="tbl-wrap" style="margin-top:10px">
+  <table id="specT">
+    <thead><tr><th>參數</th><th class="ga">GA-245U (GA-245) ＋ GH-613</th><th class="ex">EX-V02 ＋ EX-110V</th></tr></thead>
+    <tbody>
+      <tr data-c="m"><th>感測頭</th><td>GH-613 耐油型；放大器亦可配 GH-313A</td><td>EX-110V，M10×18 mm 螺紋型；放大器 EX-V02(P)</td></tr>
+      <tr data-c="m"><th>量測對象</th><td>結構加速度（振動／衝擊）</td><td>至導電金屬目標的距離</td></tr>
+      <tr data-c="m"><th>量測範圍</th><td>公開頁面未列加速度量程</td><td class="mono">0 至 2 mm；顯示 −19999 至 19999</td></tr>
+      <tr data-c="m"><th>最小檢測／解析度</th><td class="mono">0.98 m/s² <span class="src">*1</span></td><td class="mono">0.4 µm（平均 64 次）</td></tr>
+      <tr data-c="m"><th>線性度</th><td>未列</td><td class="mono">±0.3% of F.S.</td></tr>
+      <tr data-c="m"><th>頻率／取樣</th><td class="mono">反應頻率 40 Hz–8 kHz (−3 dB)</td><td class="mono">最高 40,000 次/秒；用數位濾波器時 20,000 次/秒</td></tr>
+      <tr data-c="m"><th>溫度特性</th><td>未列</td><td class="mono">0.07% F.S./°C（距離 ≤ 量程 1/2 時）</td></tr>
+      <tr data-c="o"><th>判定輸出</th><td>NPN 固態 最大 100 mA/40 V；SPDT 繼電器 250 VAC 2 A；N.O.</td><td>NPN 開集極 HIGH／GO／LOW，最大 100 mA（≤40 V）；另有閃光、警報輸出；PNP 型另洽</td></tr>
+      <tr data-c="o"><th>反應／延遲</th><td class="mono">固態 1 ms；繼電器 10 ms</td><td class="mono">0.075 ms（最高速時）</td></tr>
+      <tr data-c="o"><th>計時</th><td class="mono">ON 延遲 0–2 s 可調；OFF＝ON 設定＋65 ms</td><td class="mono">OFF 延遲 60 ms</td></tr>
+      <tr data-c="o"><th>類比輸出</th><td class="mono">0–20 VAC (P-P)、0–10 VDC</td><td class="mono">±5 V，阻抗 100 Ω</td></tr>
+      <tr data-c="o"><th>設定方式</th><td>10 圈電位計轉盤；4 準位指示燈</td><td>上下限 2 段 × 4 組切換；7 段 2 色 LED，顯示 20 次/秒</td></tr>
+      <tr data-c="o"><th>主要功能</th><td>衝擊檢知、ON/OFF 延遲</td><td>FLL 電路、數位濾波、自動歸零、偏移、<b>量測模式 15 種</b>、判定值記憶 4 組</td></tr>
+      <tr data-c="e"><th>電源</th><td class="mono">110/120/220/240 VAC，50/60 Hz；最大 5 VA</td><td class="mono">24 V ±10%，紋波 ≤10%；≤240 mA</td></tr>
+      <tr data-c="e"><th>使用溫濕度</th><td>放大器 0–50 °C、35–85% RH；GH-613 −10–60 °C <span class="src">*2</span></td><td>−10–60 °C、35–85% RH（無凝結）</td></tr>
+      <tr data-c="e"><th>防護</th><td>GH-613：IP67、耐油</td><td>EX-V 系列感測頭 IP67</td></tr>
+      <tr data-c="e"><th>耐振動</th><td colspan="2" class="mono" style="text-align:center">兩者放大器規格相同：10–55 Hz、雙倍振幅 1.5 mm、X/Y/Z 各 2 小時</td></tr>
+      <tr data-c="e"><th>重量</th><td>GA-245U 約 360 g</td><td>EX-110V 約 55 g（含 3 m 線）</td></tr>
+    </tbody>
+  </table>
+  </div>
+  <div class="cap">*1 GA-245U 型號頁的「最小檢測加速度 0.98 m/s²」標註條件為 GH-313A；套用到 GH-613 的數值請以 GH-613 型號頁或型錄確認。 *2 GH-613 溫度範圍取自原比較頁內容，本次未再開型號頁核對。</div>
+
+  <div class="grid2" style="margin-top:18px">
+    <div class="card">
+      <h4>輸出反應時間（對數刻度）</h4>
+      <div class="chart short"><canvas id="cResp"></canvas></div>
+      <div class="cap">EX-V 最快 0.075 ms，約為 GA 固態輸出的 1/13。這裡比的是「輸出反應時間」，兩者單位相同、可以直接比。</div>
+    </div>
+    <div class="card">
+      <h4>不能直接比較的兩個數字</h4>
+      <p><span class="pill ga">GA 8 kHz</span>是<b>頻率響應上限</b>（−3 dB）：高於這個頻率的振動成分會被衰減。</p>
+      <p><span class="pill ex">EX 40,000 次/秒</span>是<b>取樣率</b>。依取樣定理，可分辨的頻率上限低於取樣率的一半，實際頻寬還受濾波與平均設定影響。</p>
+      <div class="note">所以「40k ＞ 8k」不代表 EX 抓振動比較快。兩者量的物理量也不同：GA 是加速度，EX 是位移。</div>
+    </div>
+  </div>
+</section>
+
+<!-- 03 ACCURACY -->
+<section id="s3">
+  <div class="sh"><span class="num">03</span><h3>微米級精度控制</h3><span class="sub">0.4 µm 解析度 ≠ ±0.4 µm 準確度</span></div>
+  <div class="acc">
+    <div class="card ex">
+      <h4>EX-110V 誤差預算計算器</h4>
+      <div class="field"><div class="lbl">使用中溫度變化 ΔT<output id="dtO">3 °C</output></div><input id="dt" type="range" min="0" max="30" step="0.5" value="3"><div class="hint">0.07% F.S./°C ＝ 1.4 µm/°C；只在距離 ≤ 1 mm 時成立</div></div>
+      <div class="field"><div class="lbl">工作距離<output id="wdO">0.8 mm</output></div><input id="wd" type="range" min="0.1" max="2" step="0.05" value="0.8"><div class="hint">超過 1 mm 時，原廠溫度特性條件不再適用</div></div>
+      <div class="field"><div class="lbl">夾具／安裝剛性誤差（自估）<output id="fxO">2.0 µm</output></div><input id="fx" type="range" min="0" max="20" step="0.5" value="2"><div class="hint">支架撓曲、鬆動、目標側向晃動</div></div>
+      <div class="field"><div class="lbl">要判定的公差 ±T<output id="tolO">±20 µm</output></div><input id="tol" type="range" min="2" max="100" step="1" value="20"></div>
+      <div class="field"><div class="lbl">目標材質</div>
+        <div class="seg" id="mat"><button class="on" data-v="fe">鐵 S45C/SS400</button><button data-v="ot">不鏽鋼／銅／鋁</button></div>
+      </div>
+      <div class="verdict">
+        <div style="font-size:12px;color:var(--muted)">合成誤差 RSS（平方和開根號）</div>
+        <div class="big" id="rss">—</div>
+        <div style="font-size:12.5px;color:var(--ink2)">最壞情況直接相加：<b class="mono" id="wc">—</b>；佔公差 <b class="mono" id="ratio">—</b></div>
+        <div id="stat" class="status good">—</div>
+      </div>
+    </div>
+    <div class="card">
+      <h4>各誤差來源的貢獻（µm）</h4>
+      <div class="chart tall"><canvas id="cErr"></canvas></div>
+      <div class="cap">判定規則（工程慣例，非原廠標準）：RSS 低於公差的 1/4 為充裕，1/4 到 1/2 需實測確認，超過 1/2 不建議。材質選非鐵時，原廠未公開數值，計算結果僅供參考。</div>
+      <div class="grid3" style="margin-top:12px">
+        <div class="card" style="padding:12px"><b class="mono" style="font-size:20px">±6 µm</b><div style="font-size:12.5px;color:var(--ink2)">線性度 ±0.3% × 2 mm。這是線性度規格，不是整個安裝系統的總誤差保證。</div></div>
+        <div class="card" style="padding:12px"><b class="mono" style="font-size:20px">0.4 µm</b><div style="font-size:12.5px;color:var(--ink2)">平均 64 次才有的解析度。開到最高速 0.075 ms 時，不應假設這個解析度同時成立。</div></div>
+        <div class="card" style="padding:12px"><b class="mono" style="font-size:20px">1.4 µm/°C</b><div style="font-size:12.5px;color:var(--ink2)">溫漂常是最大項。精密判定前需預熱、控溫，或用標準塊定期歸零。</div></div>
+      </div>
+    </div>
+  </div>
+  <div class="grid2" style="margin-top:18px">
+    <div class="card ex"><h4>把微米級精度做出來的控制要點</h4>
+      <ul>
+        <li><b>材質一致</b>：用與產品相同材質的標準塊做校正；不鏽鋼、銅、鋁要先洽原廠或實測。</li>
+        <li><b>工作點放在前半量程</b>：距離 ≤ 1 mm 時原廠溫度特性才成立。</li>
+        <li><b>平均次數與速度取捨</b>：靜態判定用多次平均；高速動態量測才開最高取樣速度。</li>
+        <li><b>自動歸零、偏移</b>：以標準件歸零，量相對變化，可抵消部分安裝偏移。</li>
+        <li><b>剛性支架</b>：感測頭與目標的基準要在同一剛體上，避免支架振動混入讀值。</li>
+        <li><b>可追溯驗證</b>：用塊規、千分錶或雷射干涉儀建立校正曲線，並定期複核。</li>
+      </ul>
+    </div>
+    <div class="card ga"><h4>GA 的「精度」要怎麼看</h4>
+      <p>0.98 m/s² 是<b>最小檢測加速度</b>，不是「±0.1 G 的量測精度」。官方公開資料沒有量程、線性度、溫漂，因此無法建立誤差預算。</p>
+      <ul>
+        <li>它的可靠性取決於<b>門檻設定</b>：先記錄不同轉速與負載下的正常位準，再設定靈敏度。</li>
+        <li>用 ON 延遲（0–2 s）濾掉正常動作造成的短暫衝擊，降低誤報。</li>
+        <li>要診斷軸承、不平衡、對心不良，需另配振動分析儀做頻譜分析。</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- 04 MODES -->
+<section id="s4">
+  <div class="sh"><span class="num">04</span><h3>15 種量測模式</h3><span class="sub">EX-V 系列規格頁：「量測模式（15 種類）」</span></div>
+  <div class="modes" id="modeStrip"></div>
+  <div class="note" style="margin:0 0 16px">原廠網頁確認 EX-V 有 <b>15 種</b>量測模式，但只公開點名了下死點／下止點、偏心、振動等用途；原比較頁另提到「間隙」。其餘 11 種的名稱與定義沒有在網頁上列出，請以 EX-V 使用手冊為準，此處不作推測。下方用四個已確認的用途，示範「選模式後，放大器自動從波形取出判定值」的原理。</div>
+  <div class="mode-ui">
+    <div id="modeBtns"></div>
+    <div class="card">
+      <div class="ctl" style="margin-top:0">
+        <label>上限 HIGH <input id="hi" type="range" min="-60" max="60" step="1" value="25"><output id="hiO">25 µm</output></label>
+        <label>下限 LOW <input id="lo" type="range" min="-60" max="60" step="1" value="-25"><output id="loO">-25 µm</output></label>
+        <label>注入異常 <input id="fault" type="range" min="0" max="100" step="1" value="0"><output id="faultO">0%</output></label>
+        <button id="pause" class="seg" style="padding:5px 12px;font:inherit;font-size:13px;background:var(--card);cursor:pointer">⏸ 暫停</button>
+      </div>
+      <div class="legend"><span><i style="background:var(--ex)"></i>位移波形</span><span><i style="background:var(--ga)"></i>模式取出的判定值</span><span><i style="background:#9aa1a8"></i>上下限</span></div>
+      <div class="chart"><canvas id="cMode"></canvas></div>
+      <div class="readout">
+        <div><span>判定值</span><b id="mVal">—</b></div>
+        <div><span>判定（HIGH／GO／LOW）</span><b id="mJudge" class="judge">—</b></div>
+        <div><span>典型用途</span><b id="mUse" style="font-size:14px;font-family:var(--sans)">—</b></div>
+      </div>
+      <div class="cap"><span class="pill sim">模擬</span>波形為示意訊號，不是 EX-110V 實測數據。拉高「注入異常」可看判定如何改變。</div>
+    </div>
+  </div>
+</section>
+
+<!-- 05 RADAR -->
+<section id="s5">
+  <div class="sh"><span class="num">05</span><h3>綜合技術性能雷達圖</h3><span class="sub">比的是「應用適配性」，不是效能排名</span></div>
+  <div class="grid2">
+    <div class="card">
+      <div class="ctl" style="margin-top:0">
+        <div class="seg" id="radSeg"><button class="on" data-v="both">兩者疊圖</button><button data-v="ga">只看 GA</button><button data-v="ex">只看 EX-V</button></div>
+      </div>
+      <div class="chart tall"><canvas id="cRadar"></canvas></div>
+      <div class="cap">評分：1＝非主要用途或需大量額外驗證；3＝有條件適用；5＝主要設計用途。分數是依官方功能與規格做的工程判讀，不是實測，也不宜加總比面積。</div>
+    </div>
+    <div class="card" style="padding:0">
+      <table>
+        <thead><tr><th>評估軸</th><th class="ga">GA</th><th class="ex">EX</th><th>理由</th></tr></thead>
+        <tbody id="radT"></tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<!-- 06 SELECTION -->
+<section id="s6">
+  <div class="sh"><span class="num">06</span><h3>工程選型邏輯</h3><span class="sub">回答四題，看建議與理由</span></div>
+  <div class="grid2">
+    <div class="card" id="quiz"></div>
+    <div>
+      <div class="rec none" id="rec"><div class="who">請先回答左側問題</div><p style="color:var(--ink2)">每一題都對應一條規格限制，答案會即時更新。</p></div>
+      <div class="card" style="margin-top:14px">
+        <h4>決策流程</h4>
+        <ol style="margin:4px 0;padding-left:20px;color:var(--ink2);font-size:14px">
+          <li><b>要的是事件還是數值？</b>只要「異常／正常」走 GA；要 µm 數值走 EX-V。</li>
+          <li><b>目標是導電金屬嗎？</b>不是的話 EX-V 不能直接量（可貼金屬片或改其他原理）。</li>
+          <li><b>頻率在哪？</b>GA 只涵蓋 40 Hz–8 kHz；低轉速 1 倍轉頻常低於 40 Hz。</li>
+          <li><b>公差多緊？</b>用上方誤差預算檢查 EX-V 是否夠用。</li>
+          <li><b>現場供電？</b>GA-245U 要 AC，EX-V 要 24 VDC。</li>
+        </ol>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 07 APPLICATIONS -->
+<section id="s7">
+  <div class="sh"><span class="num">07</span><h3>應用場合與現場驗收</h3><span class="sub">工程應用示例，不是已查證的客戶實績</span></div>
+  <div class="ctl" style="margin-top:0"><div class="seg" id="appSeg"><button class="on" data-f="all">全部</button><button data-f="ga">GA</button><button data-f="ex">EX-V</button><button data-f="x">需另評估</button></div></div>
+  <div class="tbl-wrap" style="margin-top:10px">
+  <table id="appT">
+    <thead><tr><th>場合／需求</th><th>組合</th><th>安裝與使用時機</th><th>限制與驗證重點</th></tr></thead>
+    <tbody>
+      <tr data-c="ga"><th>撞到止擋、卡料衝擊</th><td><span class="pill ga">GA</span></td><td>裝在衝擊傳得到的固定結構，於動作期間判定</td><td>正常動作也有衝擊，須分辨正常與異常位準</td></tr>
+      <tr data-c="ga"><th>泵浦、滾輪座異常衝擊</th><td><span class="pill ga">GA</span></td><td>先記錄不同負載的正常狀態再設門檻</td><td>確認異常頻率落在 40 Hz–8 kHz；不能取代故障診斷</td></tr>
+      <tr data-c="ex"><th>金屬滾輪徑向跳動</th><td><span class="pill ex">EX-V</span></td><td>固定支架對準滾輪表面，監測一轉內的距離變化</td><td>支架振動、表面形狀與材質都會混入結果</td></tr>
+      <tr data-c="ex"><th>金屬軸軸向竄動</th><td><span class="pill ex">EX-V</span></td><td>對準軸端面，量軸端與支架的相對位移</td><td>須有足夠目標面積、正確量程與穩定基準</td></tr>
+      <tr data-c="ex"><th>治具浮起／未到位</th><td><span class="pill ex">EX-V</span></td><td>夾持完成後量測，以 HIGH／GO／LOW 判定</td><td>先實測公差、溫漂與重複性是否足夠</td></tr>
+      <tr data-c="ex"><th>鉚接／沖壓下死點</th><td><span class="pill ex">EX-V</span></td><td>對準代表機構位置的金屬目標，用下死點模式</td><td>核對量測模式、同步與運動範圍</td></tr>
+      <tr data-c="ex"><th>ATC 刀具、齒輪偏心</th><td><span class="pill ex">EX-V</span></td><td>原廠應用頁列舉的偏心檢測用途</td><td>確認轉速對應的取樣與目標面積</td></tr>
+      <tr data-c="x"><th>塑膠、玻璃、非金屬</th><td><span class="pill sim">兩者皆否</span></td><td>不宜當通用高度計</td><td>EX 需導電目標；GA 不量靜態高度</td></tr>
+      <tr data-c="x"><th>酸鹼槽、藥液飛濺區</th><td><span class="pill sim">另審查</span></td><td>隔離安裝、加護罩、放大器遠離</td><td>IP67／耐油 ≠ 耐特定藥液</td></tr>
+    </tbody>
+  </table>
+  </div>
+  <div class="grid2" style="margin-top:18px">
+    <div class="card"><h4>同一台設備為何可能兩組都裝？</h4>
+      <p>以金屬滾輪輸送機為例：<span class="pill ga">GA</span>裝在軸承座，回答「有沒有異常衝擊」；<span class="pill ex">EX-V</span>對準滾輪或軸端，回答「跳動／竄動多少 µm」。兩個訊號同時異常能縮小排查範圍，但單靠其中一個警報，不能直接斷定軸承損壞或軸彎曲。</p>
+    </div>
+    <div class="card"><h4>建立自己的實績：驗收紀錄</h4>
+      <table style="font-size:13px">
+        <thead><tr><th>項目</th><th class="ga">GA 記錄</th><th class="ex">EX-V 記錄</th></tr></thead>
+        <tbody>
+          <tr><th>正常基準</th><td>各轉速／負載的位準與警報次數</td><td>已知間隙的讀值、重複性分布</td></tr>
+          <tr><th>異常辨識</th><td>已知異常是否觸發、正常是否誤報</td><td>已知偏移是否正確判 HIGH/GO/LOW</td></tr>
+          <tr><th>環境影響</th><td>安裝位置、傳遞路徑變化</td><td>溫度、材質、支架變形的漂移</td></tr>
+          <tr><th>長期結果</th><td>誤報、漏報與工況對應</td><td>零點漂移、與參考量具的差異</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<!-- 08 XYZ -->
+<section id="s8">
+  <div class="sh"><span class="num">08</span><h3>X、Y、Z 三軸位移／速度</h3><span class="sub">兩套系統都不是原生三軸，也都不直接輸出速度</span></div>
+  <div class="hero-l" style="box-shadow:5px 5px 0 var(--bad);border-color:var(--bad);padding:18px 22px">
+    <div class="eyebrow" style="color:var(--bad)">結論先說</div>
+    <p style="margin:6px 0 0;max-width:none;color:var(--ink)"><b>GA-245＋GH-613</b> 是單點、單方向的振動／衝擊檢知；<b>EX-V02＋EX-110V</b> 是單點、單軸的渦電流距離量測。一組感測頭只對應一個量測方向，兩者都<b>不能直接輸出 X、Y、Z 三軸位移，也不能直接輸出速度（mm/s）</b>。要量三軸，必須用 3 組感測頭＋3 組放大器，再由外部 DAQ／PLC 同步取樣並運算。</p>
+  </div>
+
+  <div class="tbl-wrap" style="margin-top:18px">
+  <table>
+    <thead><tr><th>功能</th><th class="ga">GA-245 ＋ GH-613</th><th class="ex">EX-V02 ＋ EX-110V</th></tr></thead>
+    <tbody>
+      <tr><th>X/Y/Z 三軸位移</th><td><b style="color:var(--bad)">✖ 否</b></td><td><b style="color:var(--bad)">✖ 否</b>（單組只有一軸）</td></tr>
+      <tr><th>X/Y/Z 三軸速度</th><td><b style="color:var(--bad)">✖ 否</b></td><td><b style="color:var(--bad)">✖ 否</b>（不是速度感測器）</td></tr>
+      <tr><th>直接輸出速度</th><td><b style="color:var(--bad)">✖ 否</b></td><td><b style="color:var(--bad)">✖ 否</b>，需外部對位移微分</td></tr>
+      <tr><th>單軸振動檢知</th><td><b style="color:var(--good)">✔ 是</b></td><td><b style="color:var(--warn)">▲ 間接</b>：由位移隨時間的變化判斷</td></tr>
+      <tr><th>單軸位移量測</th><td><b style="color:var(--bad)">✖ 否</b></td><td><b style="color:var(--good)">✔ 是</b>（0–2 mm）</td></tr>
+      <tr><th>多點擴充</th><td>可裝多顆 GH-613，各點獨立監測</td><td>可裝多顆 EX-110V，每顆要有自己的放大器／通道</td></tr>
+      <tr><th>三軸向量合成</th><td>需外部 PLC／DAQ／軟體</td><td>需外部 PLC／DAQ／軟體</td></tr>
+    </tbody>
+  </table>
+  </div>
+
+  <div class="grid2" style="margin-top:18px">
+    <div class="card ga"><h4>GA＋GH：能做與不能做</h4>
+      <p class="sub" style="font-family:var(--mono);font-size:12px;color:var(--good);margin:8px 0 2px">✔ 可以</p>
+      <ul><li>單點異常振動監測（泵浦外殼、馬達座、軸承座）</li><li>碰撞、掉料等衝擊檢知</li><li>多點各裝一組，分別監測不同部位</li><li>振動位準持續上升時，當作早期警訊</li></ul>
+      <p style="font-family:var(--mono);font-size:12px;color:var(--bad);margin:8px 0 2px">✖ 不能</p>
+      <ul><li>輸出 X/Y/Z 三軸加速度或速度</li><li>量測工件在空間中的三維位移</li><li>取代振動頻譜分析儀做故障診斷</li></ul>
+      <div class="note">要量三軸振動，請改用三軸加速度計（IEPE／MEMS）搭配 DAQ 或振動分析儀。</div>
+    </div>
+    <div class="card ex"><h4>EX-V：能做與不能做</h4>
+      <p style="font-family:var(--mono);font-size:12px;color:var(--good);margin:8px 0 2px">✔ 可以</p>
+      <ul><li>單軸位移，例如工件相對感測頭的 Z 向距離</li><li>單一方向的偏移、浮起、間隙</li><li>最高 40,000 次/秒的動態位移</li><li>裝多組量不同位置或不同方向</li></ul>
+      <p style="font-family:var(--mono);font-size:12px;color:var(--bad);margin:8px 0 2px">✖ 不能</p>
+      <ul><li>一組同時量 X、Y、Z</li><li>直接輸出 mm/s 速度</li><li>直接量塑膠、玻璃、陶瓷（除非貼金屬標靶）</li><li>只靠一顆感測頭重建三維軌跡</li></ul>
+    </div>
+  </div>
+
+  <div class="grid2" style="margin-top:18px">
+    <div class="card"><h4>若要三軸位移：3 組 EX-V02＋EX-110V</h4>
+      <svg class="diagram" viewBox="0 0 520 250" role="img" aria-label="三軸感測頭配置與同步架構">
+        <rect x="150" y="95" width="80" height="60" fill="#9aa1a8" stroke="#16181b" stroke-width="1.5"/>
+        <text x="160" y="130" font-size="12" fill="#fff">金屬目標</text>
+        <rect x="170" y="20" width="40" height="34" fill="#1d6fa3"/><text x="181" y="42" font-size="12" fill="#fff" font-family="monospace">Z</text>
+        <line x1="190" y1="54" x2="190" y2="92" stroke="#1d6fa3" stroke-width="2"/><polygon points="185,86 195,86 190,94" fill="#1d6fa3"/>
+        <rect x="60" y="108" width="40" height="34" fill="#c2410c"/><text x="74" y="130" font-size="12" fill="#fff" font-family="monospace">X</text>
+        <line x1="100" y1="125" x2="147" y2="125" stroke="#c2410c" stroke-width="2"/><polygon points="141,120 141,130 149,125" fill="#c2410c"/>
+        <rect x="170" y="196" width="40" height="34" fill="#4d7c0f"/><text x="182" y="218" font-size="12" fill="#fff" font-family="monospace">Y</text>
+        <line x1="190" y1="196" x2="190" y2="158" stroke="#4d7c0f" stroke-width="2"/><polygon points="185,164 195,164 190,156" fill="#4d7c0f"/>
+        <text x="20" y="175" font-size="10.5" fill="#7a7f86">三軸須互相正交</text>
+        <rect x="300" y="30" width="90" height="26" fill="#fffdf8" stroke="#16181b"/><text x="308" y="48" font-size="11" font-family="monospace">EX-V02-1 X</text>
+        <rect x="300" y="112" width="90" height="26" fill="#fffdf8" stroke="#16181b"/><text x="308" y="130" font-size="11" font-family="monospace">EX-V02-2 Y</text>
+        <rect x="300" y="194" width="90" height="26" fill="#fffdf8" stroke="#16181b"/><text x="308" y="212" font-size="11" font-family="monospace">EX-V02-3 Z</text>
+        <rect x="430" y="80" width="80" height="90" fill="#16181b"/><text x="440" y="112" font-size="12" fill="#f6f3ec">同步</text><text x="440" y="130" font-size="12" fill="#f6f3ec">DAQ／PLC</text><text x="440" y="150" font-size="10.5" fill="#bdb5a3">CH1–CH3</text>
+        <path d="M390 43 H415 V100 H430 M390 125 H430 M390 207 H415 V150 H430" fill="none" stroke="#16181b" stroke-width="1.5"/>
+        <text x="396" y="38" font-size="9.5" fill="#7a7f86">±5 V</text>
+        <path d="M470 170 V240 H280 V43 H300 M280 125 H300 M280 207 H300" fill="none" stroke="#c2410c" stroke-width="1.3" stroke-dasharray="4 3"/>
+        <text x="330" y="236" font-size="10.5" fill="#c2410c">共用觸發 TIMING／SYNC</text>
+      </svg>
+      <ul style="font-size:13.5px">
+        <li><b>座標正交</b>：三軸角度誤差會直接變成向量合成誤差。</li>
+        <li><b>感測面垂直對準目標</b>：斜向安裝會產生餘弦誤差。</li>
+        <li><b>相鄰間距</b>：同型感測頭太近會互相干擾，間距請依手冊的間距表。</li>
+        <li><b>工作點</b>：三組都放在量程中段，避開 0 mm 與 2 mm 端點。</li>
+        <li><b>剛性支架、屏蔽線、單點接地</b>，遠離變頻器與動力線。</li>
+      </ul>
+      <div class="cap">原頁面引用 EX-V 手冊：SYNC 輸入最短 13 ms，TIMING／HOLD RESET 最短 1.5 ms。這些時間本次未另行核對，實際同步週期請以手冊為準；最終同步精度取決於 DAQ 通道同步能力與配線延遲。</div>
+    </div>
+    <div class="card"><h4>速度從哪裡來：外部微分</h4>
+      <div style="font-family:var(--mono);font-size:14px;background:#f7f3ea;border:1.5px solid var(--line);padding:10px 12px;line-height:1.9">
+        d(t) = [ x(t), y(t), z(t) ]<br>
+        |d| = √(x² + y² + z²)<br>
+        vₓ = dx/dt，v_y = dy/dt，v_z = dz/dt<br>
+        |v| = √(vₓ² + v_y² + v_z²)
+      </div>
+      <p style="font-size:13.5px">例：取樣間隔 0.1 ms，相鄰兩點差 2 µm → v = 0.002 mm ÷ 0.0001 s = <b class="mono">20 mm/s</b>。這是<b>由位移換算出的速度</b>，不是感測器的原生輸出。</p>
+      <ol style="font-size:13.5px;padding-left:20px;color:var(--ink2)">
+        <li>EX-V02 類比輸出接高速 DAQ</li><li>三通道同步取樣</li><li>先做低通／帶通濾波</li><li>再以有限差分求速度</li><li>用已知行程、標準塊或雷射干涉儀驗證</li>
+      </ol>
+      <div class="note red">直接對原始位移微分會放大雜訊。下方模擬可切換濾波，看差異。</div>
+    </div>
+  </div>
+
+  <div class="card" style="margin-top:18px">
+    <h4>三軸同步取樣模擬：位移 → 合成向量 → 速度</h4>
+    <div class="ctl" style="margin-top:0">
+      <label>Y 通道時間差 Δt <input id="skew" type="range" min="0" max="2" step="0.1" value="0"><output id="skewO">0.0 ms</output></label>
+      <div class="seg" id="filtSeg"><button class="on" data-v="1">先濾波再微分</button><button data-v="0">直接微分</button></div>
+    </div>
+    <div class="grid2">
+      <div style="min-width:0">
+        <div class="legend"><span><i style="background:#c2410c"></i>x(t)</span><span><i style="background:#4d7c0f"></i>y(t)</span><span><i style="background:#1d6fa3"></i>z(t)</span><span><i style="background:#16181b"></i>|d| 合成</span></div>
+        <div class="chart"><canvas id="cXYZ"></canvas></div>
+      </div>
+      <div style="min-width:0">
+        <div class="legend"><span><i style="background:#16181b"></i>計算出的 |v|</span><span><i style="background:#9aa1a8"></i>真實 |v|</span></div>
+        <div class="chart"><canvas id="cVel"></canvas></div>
+      </div>
+    </div>
+    <div class="readout">
+      <div><span>|d| 最大誤差（因通道不同步）</span><b id="skErr">—</b></div>
+      <div><span>|v| 均方根誤差</span><b id="vErr">—</b></div>
+      <div><span>真實 |v| 峰值</span><b id="vPk">—</b></div>
+    </div>
+    <div class="cap"><span class="pill sim">模擬</span>假設 10 kHz 取樣、雜訊約 0.3 µm 的示意訊號，不是 EX-110V 實測數據。拉大 Δt 可看到通道不同步時，合成向量會失真。</div>
+  </div>
+
+  <div class="grid2" style="margin-top:18px">
+    <div class="card"><h4>依需求選擇方案</h4>
+      <table style="font-size:13.5px">
+        <thead><tr><th>需求</th><th>建議做法</th></tr></thead>
+        <tbody>
+          <tr><th>三軸微小位移（金屬）</th><td>3 組 EX-110V＋3 組 EX-V02＋同步 DAQ</td></tr>
+          <tr><th>三軸位移（多種材質）</th><td>3 組雷射位移感測頭＋控制器（規格依型號確認）</td></tr>
+          <tr><th>三軸振動加速度</th><td>三軸加速度計＋振動分析儀／DAQ</td></tr>
+          <tr><th>三軸速度</th><td>雷射都卜勒測速儀、IMU，或由加速度積分</td></tr>
+          <tr><th>多點高度、翹曲</th><td>IX 系列多點雷射（不等於三軸振動）</td></tr>
+          <tr><th>三維形狀、段差</th><td>3D 雷射輪廓或視覺量測</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="card"><h4>不建議的做法</h4>
+      <ul>
+        <li>宣稱一組 EX-V02＋EX-110V 可以量三軸</li>
+        <li>三顆感測頭裝得太近卻沒確認間距</li>
+        <li>用不同時間讀到的 PLC 數值直接合成三軸</li>
+        <li>把 EX-110V 直接用在非導電材料</li>
+        <li>把 GA-245＋GH-613 當成三軸位移系統</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- 09 TRAJECTORY -->
+<section id="s9">
+  <div class="sh"><span class="num">09</span><h3>三組資料怎麼合成 3D 軌跡或向量</h3><span class="sub">前提：正交安裝、同步取樣、共用同一原點</span></div>
+  <div class="grid3">
+    <div class="card"><h4>① 建立座標</h4><ul style="font-size:13.5px"><li>在機台或治具上定義固定的右手座標系：X 左右、Y 前後、Z 上下</li><li>三顆 EX-110V 分別沿 X、Y、Z，盡量互相垂直</li><li>對準同一金屬目標，或同一剛體上的三個已知參考點</li></ul></div>
+    <div class="card"><h4>② 同時歸零、同步取樣</h4><ul style="font-size:13.5px"><li>安裝完成後三組<b>同時執行 ZERO</b>，初始位置即為 3D 原點</li><li>共用 SYNC／TIMING 觸發，DAQ 三通道使用同一時間戳記</li><li>EX-V02 最高 40,000 次/秒；用數位濾波時為 20,000 次/秒</li></ul></div>
+    <div class="card"><h4>③ 逐點組成向量與軌跡</h4><ul style="font-size:13.5px"><li>每個取樣時間得到 <span class="mono">d(t) = [x, y, z]</span></li><li>|d| = √(x² + y² + z²)</li><li>依序連起 (x₁,y₁,z₁)、(x₂,y₂,z₂)…，就是相對原點的 3D 軌跡</li></ul></div>
+  </div>
+
+  <div class="grid2" style="margin-top:18px">
+    <div class="card">
+      <h4>3D 軌跡檢視器（可用滑鼠／手指拖曳旋轉）</h4>
+      <div class="ctl" style="margin-top:0">
+        <div class="seg" id="trajSeg"><button class="on" data-v="orbit">軸心偏擺（橢圓）</button><button data-v="axial">偏擺＋軸向竄動</button><button data-v="drift">零點漂移</button></div>
+      </div>
+      <div class="chart tall" id="trajWrap" style="cursor:grab;touch-action:none;background:#fbf8f1;border:1.5px solid var(--line)"><canvas id="cTraj"></canvas></div>
+      <div class="legend"><span><i style="background:#c2410c"></i>X</span><span><i style="background:#4d7c0f"></i>Y</span><span><i style="background:#1d6fa3"></i>Z</span><span><i style="background:#16181b"></i>軌跡</span><span><i style="background:#b3261e"></i>目前向量 d(t)</span></div>
+      <div class="cap"><span class="pill sim">模擬</span>單位 µm，以歸零點為原點的示意軌跡。旋轉軸常見的判讀項目：軸心偏移量、偏擺半徑、橢圓軌跡、軸向竄動、不同轉速下的位移變化。</div>
+    </div>
+    <div class="card">
+      <h4>向量計算器</h4>
+      <div class="field"><div class="lbl">X 位移<output id="vxO"></output></div><input id="vx" type="range" min="-50" max="50" step="0.5" value="20"></div>
+      <div class="field"><div class="lbl">Y 位移<output id="vyO"></output></div><input id="vy" type="range" min="-50" max="50" step="0.5" value="-15"></div>
+      <div class="field"><div class="lbl">Z 位移<output id="vzO"></output></div><input id="vz" type="range" min="-50" max="50" step="0.5" value="10"></div>
+      <div class="verdict">
+        <div style="font-size:12px;color:var(--muted)">合成位移 |d|</div>
+        <div class="big" id="vMag">—</div>
+        <div class="mono" style="font-size:13px;margin-top:6px" id="vAng">—</div>
+      </div>
+      <div class="note">頁面範例：X＝+0.020 mm、Y＝−0.015 mm、Z＝+0.010 mm → |d| = √(0.020² + 0.015² + 0.010²) = <b>0.0269 mm ＝ 26.9 µm</b>（上方預設值即此例）。</div>
+      <div class="cap">方向角 α、β、γ 是向量與 X、Y、Z 軸的夾角：cos α = x/|d|，以此類推。這三個角度不是原頁面內容，是另外加入的標準向量算法。</div>
+    </div>
+  </div>
+  <div class="note red" style="margin-top:14px">EX-V 的偏心／振動模式可以監測單軸振幅，但<b>三軸合成一定要靠外部同步擷取與運算</b>。量程只有 0–2 mm，所以這是微小位移的軌跡，不是大行程的位置追蹤。</div>
+</section>
+
+<!-- 10 SPACING -->
+<section id="s10">
+  <div class="sh"><span class="num">10</span><h3>EX-110V 相鄰安裝距離限制</h3><span class="sub">依頁面引用之 EX-V 使用手冊</span></div>
+  <div class="grid2">
+    <div class="card ex">
+      <h4>互動檢查：兩顆 EX-110V 的中心距</h4>
+      <div class="ctl" style="margin-top:0">
+        <label>中心距 <input id="sp" type="range" min="10" max="60" step="1" value="24"><output id="spO">24 mm</output></label>
+        <label><input type="checkbox" id="spSync"> 使用 SYNC 交替激勵</label>
+      </div>
+      <svg class="diagram" viewBox="0 0 520 190" id="spSvg" role="img" aria-label="相鄰感測頭間距示意">
+        <rect x="20" y="150" width="480" height="26" fill="#9aa1a8" stroke="#16181b" stroke-width="1.5"/><text x="30" y="168" font-size="12" fill="#fff">金屬目標</text>
+        <g id="spA"></g><g id="spB"></g>
+        <g id="spDim"></g>
+      </svg>
+      <div id="spStat" class="status good">—</div>
+      <div class="cap">圖中距離為等比例示意（EX-110V 為 M10 螺紋頭，外徑約 10 mm）。磁場範圍只是示意，不是實際磁場分布。</div>
+    </div>
+    <div class="card">
+      <table style="font-size:14px">
+        <thead><tr><th>安裝情境</th><th>EX-110V 間距要求</th></tr></thead>
+        <tbody>
+          <tr><th>兩顆以上並排安裝</th><td><b class="mono" style="font-size:18px">＞ 30 mm</b></td></tr>
+          <tr><th>同型並排、未用同步</th><td><b class="mono" style="font-size:18px">＞ 30 mm</b></td></tr>
+          <tr><th>想縮小間距</th><td>用 SYNC 端子讓兩顆交替激勵以降低干擾，但仍要先驗證輸出穩定性</td></tr>
+        </tbody>
+      </table>
+      <p style="font-size:13.5px;margin-top:10px">手冊說明：同型感測頭並排時可能互相干擾而造成輸出不正確；遵守間距表可確保在 <b>64 次平均</b>條件下符合顯示解析度規格。</p>
+      <h4 style="margin-top:12px">其他安裝限制</h4>
+      <ul style="font-size:13.5px">
+        <li><b>校正時，感測頭周圍 15 cm 內不可有金屬物件</b>；校正後再依實際安裝狀態驗證</li>
+        <li>避開大面積金屬結構、鄰近感測頭的金屬支架或其他導電體</li>
+        <li><b>鎖緊扭矩不得超過 10 N·m</b></li>
+        <li><b>不可延長或剪短原廠 3 m 感測線</b>，否則特性會改變</li>
+      </ul>
+    </div>
+  </div>
+  <div class="note" style="margin-top:14px">三軸配置時，X、Y、Z 三顆感測頭若彼此靠近，同樣要保持 30 mm 以上的中心距。空間不夠時，先用 SYNC 交替激勵實測，再決定是否加大治具。</div>
+</section>
+
+<!-- 11 ACCEL -->
+<section id="s11">
+  <div class="sh"><span class="num">11</span><h3>量測三軸振動加速度該怎麼選型</h3><span class="sub">改用三軸加速度計，不要用 GA 或 EX-V 代替</span></div>
+  <div class="hero-l" style="box-shadow:5px 5px 0 var(--ink);padding:16px 22px">
+    <p style="margin:0;max-width:none;color:var(--ink)"><b style="color:var(--ex)">EX-V 量「位移」</b>，<b style="color:var(--ga)">GA 量「振動異常」</b>，<b>三軸加速度計才量「三軸加速度」</b>。要做預測維護、頻譜診斷，選三軸加速度計；要做精密定位或工件偏移，才用 3 組 EX-V02＋EX-110V。</p>
+  </div>
+  <div class="grid2" style="margin-top:18px">
+    <div class="card">
+      <h4>選型原則</h4>
+      <table style="font-size:13.5px">
+        <thead><tr><th>項目</th><th>建議條件</th><th>說明</th></tr></thead>
+        <tbody>
+          <tr><th>感測軸數</th><td>3 軸</td><td>單一感測頭同步輸出 X、Y、Z</td></tr>
+          <tr><th>輸出型式</th><td>IEPE／ICP 或 4–20 mA</td><td>IEPE 適合高頻分析；4–20 mA 適合長距離工業監控</td></tr>
+          <tr><th>頻寬</th><td>依轉速與故障頻率</td><td>軸承、齒輪、高頻衝擊需較高頻寬</td></tr>
+          <tr><th>量測範圍</th><td>一般 10–50 g；衝擊 100 g 以上</td><td>量程太小會飽和，太大會降低解析度</td></tr>
+          <tr><th>解析度／雜訊</th><td>越低越好</td><td>影響微小振動與早期異常的辨識</td></tr>
+          <tr><th>安裝方式</th><td>螺絲、磁座、黏著</td><td>螺絲固定的頻寬與剛性最好；磁座適合巡檢</td></tr>
+          <tr><th>環境</th><td>IP67／IP68、耐油、耐溫</td><td>濕製程、油霧、清洗環境要特別確認</td></tr>
+          <tr><th>認證</th><td>ATEX／IECEx</td><td>防爆區需依分區與法規確認</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="card">
+      <h4>選型助手</h4>
+      <div class="q"><div class="qt">應用情境</div><div class="opts" id="acApp">
+        <button data-v="mon" class="on">泵浦／馬達長期監控</button><button data-v="alarm">只要異常警報</button><button data-v="diag">軸承／齒輪診斷</button><button data-v="harsh">高溫或防爆區</button><button data-v="imu">姿態／角速度</button>
+      </div></div>
+      <div class="field"><div class="lbl">預估最大加速度<output id="gO">8 g</output></div><input id="gIn" type="range" min="1" max="300" step="1" value="8"><div class="hint">建議量程至少留 2 倍餘裕（工程慣例，非原頁面內容）</div></div>
+      <div class="field"><div class="lbl">要分析的最高頻率<output id="hzO">2000 Hz</output></div><input id="hzIn" type="range" min="100" max="20000" step="100" value="2000"></div>
+      <div class="field"><div class="lbl">感測器到擷取設備的距離</div><div class="seg" id="acDist"><button data-v="near" class="on">近（盤內／機旁）</button><button data-v="far">遠（長距離配線）</button></div></div>
+      <div class="rec ex" id="acRec" style="min-height:0"></div>
+    </div>
+  </div>
+  <div class="grid2" style="margin-top:18px">
+    <div class="card">
+      <h4>常見配置</h4>
+      <table style="font-size:13.5px">
+        <thead><tr><th>應用</th><th>建議配置</th></tr></thead>
+        <tbody>
+          <tr><th>泵浦、馬達、風扇長期監控</th><td>三軸 IEPE 加速度計＋振動監測器／DAQ</td></tr>
+          <tr><th>異常警報，不需頻譜</th><td>三軸加速度計＋PLC 類比輸入＋門檻邏輯</td></tr>
+          <tr><th>軸承、齒輪、聯軸器診斷</th><td>三軸 IEPE＋高速 DAQ＋FFT／包絡分析</td></tr>
+          <tr><th>高溫或防爆區</th><td>高溫型或防爆型三軸加速度計，並確認纜線與放大器</td></tr>
+          <tr><th>姿態角、傾斜、角速度</th><td>IMU：三軸加速度計＋三軸陀螺儀（必要時加磁力計）</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="card">
+      <h4>為什麼不用這兩套？</h4>
+      <p><span class="pill ga">GA＋GH</span>能偵測振動或衝擊並輸出門檻警報，但設計目的是異常檢知，拿不到 X、Y、Z 三軸加速度波形，也不能算 RMS、峰值、頻譜、包絡或軸承特徵頻率。</p>
+      <p><span class="pill ex">EX-V</span>量的是位移，沒有三軸輸出。若用三組位移再對時間<b>二次微分</b>求加速度，雜訊會被大幅放大，一般不適合當振動診斷的主要手段（第 08 段的模擬只做一次微分，雜訊就已明顯放大）。</p>
+      <h4 style="margin-top:12px">系統分工</h4>
+      <table style="font-size:13.5px">
+        <tbody>
+          <tr><th>三軸微小位移、偏移、間隙</th><td>3 組 EX-110V＋3 組 EX-V02＋同步 DAQ</td></tr>
+          <tr><th>三軸加速度與頻譜診斷</th><td>三軸 IEPE＋振動分析儀／高速 DAQ</td></tr>
+          <tr><th>設備異振、撞擊警報</th><td>GA-245＋GH-613</td></tr>
+          <tr><th>姿態、傾斜、角速度</th><td>IMU</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+  <div class="cap" style="margin-top:8px">原頁面沒有指定三軸加速度計的品牌或型號，本段只提供選型條件。實際型號請依頻寬、量程、雜訊與環境規格向供應商詢價比對。</div>
+</section>
+
+<!-- 12 ACCEL & GYRO -->
+<section id="s12">
+  <div class="sh"><span class="num">12</span><h3>加速度計與陀螺儀：工作原理、規格、用途</h3><span class="sub">整理自 ARIAT TECH 技術文章（2026-02-03）</span></div>
+  <div class="grid2">
+    <div class="card" style="border-left:12px solid #c2410c">
+      <h4 style="color:#c2410c">加速度計 Accelerometer：量「直線運動」</h4>
+      <p>測量運動與速度變化，可判斷物體是否在移動、減速、加速或改變方向，也用來檢測<b>傾斜、振動與晃動</b>。手機轉向時螢幕跟著旋轉，就是加速度計感應到姿態改變。</p>
+      <p style="font-size:13.5px">原理：運動時，內部的微小質量（檢驗質量）偏離原位，改變電容等電氣特性；系統讀取變化後算出加速度或傾斜量。</p>
+    </div>
+    <div class="card" style="border-left:12px solid #1d6fa3">
+      <h4 style="color:#1d6fa3">陀螺儀 Gyroscope：量「旋轉運動」</h4>
+      <p>測量旋轉的<b>速度與方向</b>，也就是角速度。玩手機遊戲時傾斜手機轉向，就是陀螺儀在追蹤轉動。</p>
+      <p style="font-size:13.5px">原理：內部有一個持續振動的微小結構；設備旋轉時，旋轉力會改變振動模式，感測器把這個變化轉成代表轉速與方向的電訊號。</p>
+    </div>
+  </div>
+
+  <div class="grid2" style="margin-top:18px">
+    <div class="card">
+      <h4>電容感測原理：差分電容</h4>
+      <p style="font-size:13.5px">固定電極與可動的檢驗質量組成兩個電容。靜止時兩側電容相等；有加速度時質量偏移，一側電容變大、另一側變小，再由 ADC 放大轉成數位資料。</p>
+      <div style="font-family:var(--mono);font-size:14px;background:#f7f3ea;border:1.5px solid var(--line);padding:8px 12px">C = εA / d　　ΔC = C₁ − C₂</div>
+      <div class="ctl"><label>施加加速度 <input id="capA" type="range" min="-8" max="8" step="0.1" value="2"><output id="capAO">+2.0 g</output></label></div>
+      <svg class="diagram" viewBox="0 0 520 150" role="img" aria-label="MEMS 加速度計差分電容示意">
+        <rect x="10" y="20" width="500" height="10" fill="#bdb5a3"/><text x="14" y="16" font-size="10.5" fill="#7a7f86">錨點／基材</text>
+        <rect x="10" y="130" width="500" height="10" fill="#bdb5a3"/>
+        <g id="capMass"></g>
+        <rect x="100" y="40" width="14" height="80" fill="#1d6fa3"/><text x="70" y="85" font-size="12" fill="#1d6fa3" font-family="monospace">C₁</text>
+        <rect x="406" y="40" width="14" height="80" fill="#1d6fa3"/><text x="428" y="85" font-size="12" fill="#1d6fa3" font-family="monospace">C₂</text>
+      </svg>
+      <div class="readout">
+        <div><span>質量偏移（示意）</span><b id="capX">—</b></div>
+        <div><span>C₁ ／ C₂（相對值）</span><b id="capC">—</b></div>
+        <div><span>ΔC（相對值）</span><b id="capD">—</b></div>
+      </div>
+      <div class="chart short" style="margin-top:10px"><canvas id="cCap"></canvas></div>
+      <div class="cap"><span class="pill sim">示意</span>以初始間隙 1、每 g 偏移 0.04 計算的相對值，只用來說明 C 與 d 成反比；不是任何特定元件的規格。偏移越大，ΔC 的非線性越明顯。</div>
+    </div>
+    <div class="card">
+      <h4>MEMS 加速度計結構</h4>
+      <svg class="diagram" viewBox="0 0 520 230" role="img" aria-label="MEMS 加速度計結構">
+        <rect x="10" y="200" width="500" height="20" fill="#bdb5a3"/><text x="220" y="215" font-size="11" fill="#16181b">基材 Substrate</text>
+        <rect x="30" y="80" width="30" height="70" fill="#7a7f86"/><rect x="460" y="80" width="30" height="70" fill="#7a7f86"/>
+        <text x="18" y="72" font-size="11">錨點</text><text x="452" y="72" font-size="11">錨點</text>
+        <path d="M60 115 l12 -10 l12 20 l12 -20 l12 20 l12 -10" fill="none" stroke="#16181b" stroke-width="2"/>
+        <path d="M460 115 l-12 -10 l-12 20 l-12 -20 l-12 20 l-12 -10" fill="none" stroke="#16181b" stroke-width="2"/>
+        <text x="62" y="150" font-size="11">懸臂樑（彈簧）</text>
+        <rect x="132" y="85" width="256" height="60" fill="#c2410c"/><text x="210" y="120" font-size="13" fill="#fff" font-weight="700">檢驗質量 Proof Mass</text>
+        <g fill="#c2410c"><rect x="150" y="45" width="8" height="40"/><rect x="190" y="45" width="8" height="40"/><rect x="230" y="45" width="8" height="40"/><rect x="270" y="45" width="8" height="40"/><rect x="310" y="45" width="8" height="40"/><rect x="350" y="45" width="8" height="40"/></g>
+        <g fill="#1d6fa3"><rect x="164" y="20" width="8" height="55"/><rect x="204" y="20" width="8" height="55"/><rect x="244" y="20" width="8" height="55"/><rect x="284" y="20" width="8" height="55"/><rect x="324" y="20" width="8" height="55"/><rect x="364" y="20" width="8" height="55"/></g>
+        <text x="390" y="40" font-size="11" fill="#1d6fa3">固定電極（感測指）</text>
+        <text x="390" y="62" font-size="11" fill="#c2410c">可動感測指</text>
+      </svg>
+      <ul style="font-size:13.5px">
+        <li><b>檢驗質量</b>：主要的可動部分，設備移動或傾斜時會輕微移動。</li>
+        <li><b>懸臂樑</b>：像小彈簧，允許移動又維持平衡。</li>
+        <li><b>錨點</b>：把結構固定在基材上。</li>
+        <li><b>感測指與電極</b>：彼此非常接近，質量移動使間距改變，電訊號隨之變化。</li>
+      </ul>
+      <div class="note"><b>MEMS</b>（微機電系統）是做在矽晶片上的微小機械結構，結合機械部件與讀取電路。體積小、功耗低、價格實惠，所以能放進手機、手錶、汽車和醫療設備。</div>
+    </div>
+  </div>
+
+  <div class="grid2" style="margin-top:18px">
+    <div class="card">
+      <h4>重力影響：靜止傾斜時兩者的讀值</h4>
+      <div class="ctl" style="margin-top:0"><label>傾斜角 θ <input id="tilt" type="range" min="-90" max="90" step="1" value="30"><output id="tiltO">30°</output></label></div>
+      <div class="chart short"><canvas id="cTilt"></canvas></div>
+      <div class="cap">文章指出：重力會影響加速度計讀數，不影響陀螺儀讀數。所以靜止傾斜時，加速度計的 X 軸讀到 g·sin θ、Z 軸讀到 g·cos θ，可以反推傾斜角；陀螺儀因為沒有在轉動，讀值為 0。</div>
+    </div>
+    <div class="card">
+      <h4>陀螺儀漂移與感測器融合</h4>
+      <div class="ctl" style="margin-top:0"><label>陀螺儀零偏 <input id="bias" type="range" min="0" max="2" step="0.05" value="0.5"><output id="biasO">0.50 °/s</output></label></div>
+      <div class="legend"><span><i style="background:#1d6fa3"></i>只積分陀螺儀</span><span><i style="background:#c2410c"></i>只用加速度計</span><span><i style="background:#16181b"></i>融合（互補濾波）</span></div>
+      <div class="chart short"><canvas id="cDrift"></canvas></div>
+      <div class="cap"><span class="pill sim">模擬</span>設備靜止、真實角度 0°。陀螺儀的小偏差經積分後會越漂越遠；加速度計不漂但雜訊大；融合後兩者互補。互補濾波係數 0.98 是常見示範值，不是文章內容。</div>
+    </div>
+  </div>
+
+  <div class="grid2" style="margin-top:18px">
+    <div class="card" style="padding:0">
+      <table style="font-size:13.5px">
+        <thead><tr><th>特點</th><th style="background:#c2410c">MEMS 加速度計</th><th class="ex">MEMS 陀螺儀</th></tr></thead>
+        <tbody>
+          <tr><th>測量的運動</th><td>直線運動</td><td>旋轉運動</td></tr>
+          <tr><th>檢測什麼</th><td>加速度、傾斜、振動、突然移動</td><td>轉速與方向</td></tr>
+          <tr><th>感測原理</th><td>內部質量的微小移動</td><td>微小結構的振動變化</td></tr>
+          <tr><th>運動方向</th><td>上下、左右、前後</td><td>順時針或逆時針旋轉</td></tr>
+          <tr><th>受重力影響</th><td><b>是</b></td><td><b>否</b></td></tr>
+          <tr><th>輸出資訊</th><td>加速度與傾斜資料</td><td>角速度</td></tr>
+          <tr><th>常見用途</th><td>螢幕旋轉、計步、振動感測</td><td>遊戲控制、導航、方向追蹤</td></tr>
+          <tr><th>典型應用</th><td>手機、穿戴裝置、車輛、無人機</td><td>手機、無人機、機器人、導航</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="card" style="padding:0">
+      <table style="font-size:13.5px">
+        <thead><tr><th>規格</th><th style="background:#c2410c">加速度計</th><th class="ex">陀螺儀</th></tr></thead>
+        <tbody>
+          <tr><th>量測範圍</th><td class="mono">±2g、±4g、±8g</td><td class="mono">±250°/s、±500°/s</td></tr>
+          <tr><th>靈敏度</th><td>每單位加速度的輸出變化</td><td>每單位旋轉的輸出變化</td></tr>
+          <tr><th>解析度</th><td>能檢測的最小加速度</td><td>能檢測的最小旋轉</td></tr>
+          <tr><th>準確度</th><td>讀數與實際加速度的接近程度</td><td>讀數與實際旋轉的接近程度</td></tr>
+          <tr><th>雜訊</th><td>影響讀數穩定性</td><td>影響讀數平滑度</td></tr>
+          <tr><th>偏差／漂移</th><td>通常較低且穩定</td><td><b>不校正會隨時間增加</b></td></tr>
+          <tr><th>頻寬</th><td>能追蹤加速度變化的速度</td><td>能追蹤轉速變化的速度</td></tr>
+          <tr><th>取樣率</th><td>每秒讀數次數</td><td>每秒讀數次數</td></tr>
+          <tr><th>功耗</th><td>一般較低</td><td>略高於加速度計</td></tr>
+          <tr><th>溫度範圍</th><td>工作溫度限制</td><td>工作溫度限制</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="grid2" style="margin-top:18px">
+    <div class="card">
+      <h4>IMU（慣性量測單元）</h4>
+      <svg class="diagram" viewBox="0 0 520 150" role="img" aria-label="IMU 組成">
+        <rect x="10" y="20" width="140" height="34" fill="#c2410c"/><text x="22" y="42" font-size="12" fill="#fff">加速度計：直線、傾斜</text>
+        <rect x="10" y="62" width="140" height="34" fill="#1d6fa3"/><text x="22" y="84" font-size="12" fill="#fff">陀螺儀：旋轉</text>
+        <rect x="10" y="104" width="140" height="34" fill="#fffdf8" stroke="#16181b" stroke-dasharray="4 3"/><text x="22" y="126" font-size="12">磁力計（選配）：方位</text>
+        <path d="M150 37 H200 V80 H230 M150 79 H230 M150 121 H200 V80" fill="none" stroke="#16181b" stroke-width="1.5"/>
+        <rect x="230" y="50" width="120" height="60" fill="#16181b"/><text x="252" y="76" font-size="13" fill="#f6f3ec" font-weight="700">感測器融合</text><text x="252" y="96" font-size="11" fill="#bdb5a3">Sensor Fusion</text>
+        <line x1="350" y1="80" x2="380" y2="80" stroke="#16181b" stroke-width="1.5"/><polygon points="380,75 390,80 380,85" fill="#16181b"/>
+        <text x="396" y="62" font-size="12">位置</text><text x="396" y="82" font-size="12">方向／姿態</text><text x="396" y="102" font-size="12">空間中的運動</text>
+      </svg>
+      <p style="font-size:13.5px">IMU 把多個運動感測器做成一個模組，通常是加速度計加陀螺儀，有時再加磁力計，利用地磁場判斷方位。兩者資料結合後，能更準確地描述設備的移動情形。</p>
+    </div>
+    <div class="card">
+      <h4>常見問題</h4>
+      <div id="faq"></div>
+    </div>
+  </div>
+
+  <div class="card" style="margin-top:18px">
+    <h4>和本頁 KEYENCE 兩套系統的關係</h4>
+    <table style="font-size:13.5px">
+      <thead><tr><th>感測器</th><th>量的物理量</th><th>典型輸出</th><th>在本頁的定位</th></tr></thead>
+      <tbody>
+        <tr><th><span class="pill ga">GA＋GH-613</span></th><td>結構振動加速度（單點）</td><td>門檻警報、振動位準</td><td>異常檢知，不輸出三軸波形</td></tr>
+        <tr><th><span class="pill ex">EX-V＋EX-110V</span></th><td>到金屬目標的距離（單軸）</td><td>µm 位移、HIGH／GO／LOW</td><td>精密位移，三軸需 3 組</td></tr>
+        <tr><th>三軸加速度計</th><td>X、Y、Z 加速度</td><td>三軸波形、RMS、頻譜</td><td>第 11 段的振動診斷方案</td></tr>
+        <tr><th>陀螺儀</th><td>角速度（°/s）</td><td>轉速與方向</td><td>姿態、旋轉追蹤</td></tr>
+        <tr><th>IMU</th><td>加速度＋角速度（＋磁場）</td><td>姿態角、方向、運動</td><td>需要傾斜、角速度時才選</td></tr>
+      </tbody>
+    </table>
+    <div class="note">文章內容以手機、手錶、無人機、汽車等<b>消費級 MEMS</b> 為例，量程範例 ±2–8 g 也屬於這類。工業振動監測常用的 IEPE 壓電式加速度計，量程與頻寬通常不同，選型時仍以第 11 段的條件為準（此說明為補充，非文章內容）。</div>
+  </div>
+</section>
+
+<footer>
+  <b>資料來源與限制</b>
+  <ul>
+    <li>規格：<a href="https://www.keyence.com.tw/products/sensor/specific-solution/ga/models/ga-245u/" target="_blank" rel="noopener">GA-245U 型號頁</a>、<a href="https://www.keyence.com.tw/products/sensor/proximity/ex-v/models/ex-110v/" target="_blank" rel="noopener">EX-110V 型號頁</a>、<a href="https://www.keyence.com.tw/products/sensor/proximity/ex-v/specs/" target="_blank" rel="noopener">EX-V 系列規格</a>、<a href="https://www.keyence.com.tw/landing/lpc/sensor_ex_sem190509.jsp" target="_blank" rel="noopener">EX 系列應用頁</a>（KEYENCE 台灣）。</li>
+    <li>雷達評分、應用示例與驗收框架來自 Perplexity 比較頁，屬工程判讀。</li>
+    <li>三軸配置、同步時間與速度換算來自 Perplexity 三軸問答頁，該頁引用 <a href="https://www.manualshelf.com/manual/keyence/ex-v-series/owner-s-manual-english.html" target="_blank" rel="noopener">EX-V 系列使用手冊</a>；相鄰間距與同步時間請以手冊核對。</li>
+    <li>3D 軌跡合成、EX-110V 相鄰間距 ＞30 mm、校正 15 cm 淨空、扭矩 10 N·m、3 m 線材限制，以及三軸加速度計選型，來自 Perplexity 後續問答；該頁引用 <a href="https://manualmachine.com/keyence/exv/1579578-user-manual/" target="_blank" rel="noopener">EX-V 使用手冊（manualmachine）</a>，本次未另行開啟手冊核對。</li>
+    <li>第 12 段加速度計與陀螺儀內容整理自 <a href="https://www.ariat-tech.tw/blog/Accelerometer-and-Gyroscope-Sensors-Working,Specifications,and-Uses.html" target="_blank" rel="noopener">ARIAT TECH〈加速度計和陀螺儀傳感器的工作原理、規格和用途〉</a>（2026-02-03）；電容、傾斜、漂移圖為示意模擬。</li>
+    <li>標示「示意」「模擬」的圖表只用來說明原理，不是實測數據。正式選型請以最新型錄、規格書與實機測試為準。</li>
+  </ul>
+</footer>
+</div>
+
+<script>
+const C={ga:'#c2410c',ex:'#1d6fa3',ink:'#16181b',ink2:'#43474d',muted:'#7a7f86',grid:'#e6e0d2',band:'rgba(122,127,134,.18)',card:'#fffdf8'};
+Chart.defaults.font.family='"Microsoft JhengHei UI","PingFang TC","Segoe UI",sans-serif';
+Chart.defaults.font.size=12;Chart.defaults.color=C.ink2;
+Chart.defaults.plugins.legend.labels.boxWidth=14;Chart.defaults.plugins.legend.labels.boxHeight=4;
+Chart.defaults.plugins.tooltip.backgroundColor='#16181b';Chart.defaults.plugins.tooltip.padding=10;
+Chart.defaults.maintainAspectRatio=false;Chart.defaults.responsive=true;
+const ax=(o={})=>Object.assign({grid:{color:C.grid},border:{color:'#bdb5a3'},ticks:{color:C.ink2}},o);
+const $=s=>document.querySelector(s), $$=s=>document.querySelectorAll(s);
+
+/* nav highlight */
+const secs=[...$$('section')];const links=[...$$('#nav a')];
+const io=new IntersectionObserver(es=>{es.forEach(e=>{if(e.isIntersecting){links.forEach(l=>l.classList.toggle('on',l.getAttribute('href')==='#'+e.target.id))}})},{rootMargin:'-40% 0px -55% 0px'});
+secs.forEach(s=>io.observe(s));
+
+/* 01a GA frequency response (schematic) */
+const fr=[];for(let i=0;i<=120;i++){const f=10*Math.pow(10,i*(3.3/120));const hp=1/Math.sqrt(1+Math.pow(40/f,4)),lp=1/Math.sqrt(1+Math.pow(f/8000,4));fr.push({x:f,y:20*Math.log10(hp*lp)})}
+const cFreq=new Chart($('#cFreq'),{type:'line',data:{datasets:[
+ {label:'GA 帶通（示意）',data:fr,borderColor:C.ga,borderWidth:2,pointRadius:0,tension:.2},
+ {label:'1 倍轉頻',data:[{x:30,y:-30},{x:30,y:2}],borderColor:C.ink,borderWidth:2,borderDash:[5,4],pointRadius:0},
+ {label:'−3 dB',data:[{x:10,y:-3},{x:20000,y:-3}],borderColor:'#9aa1a8',borderWidth:1,pointRadius:0}
+]},options:{parsing:false,interaction:{mode:'nearest',intersect:false},plugins:{legend:{position:'top',align:'end'},tooltip:{callbacks:{label:c=>c.dataset.label+'：'+c.parsed.x.toFixed(0)+' Hz, '+c.parsed.y.toFixed(1)+' dB'}}},
+ scales:{x:ax({type:'logarithmic',min:10,max:20000,title:{display:true,text:'頻率 Hz（對數）'},ticks:{callback:v=>[10,40,100,1000,8000,20000].includes(v)?(v>=1000?v/1000+'k':v):''}}),y:ax({min:-30,max:2,title:{display:true,text:'相對增益 dB'}})}}});
+function upRpm(){const r=+$('#rpm').value,f=r/60;$('#rpmO').textContent=r+' rpm';
+ cFreq.data.datasets[1].data=[{x:Math.max(10,f),y:-30},{x:Math.max(10,f),y:2}];cFreq.update('none');
+ const inB=f>=40&&f<=8000;$('#rpmMsg').innerHTML='1× = <b>'+f.toFixed(1)+' Hz</b> '+(inB?'<span style="color:var(--good)">✔ 在頻帶內</span>':'<span style="color:var(--bad)">✖ 低於 40 Hz，不在標示頻帶</span>')}
+$('#rpm').oninput=upRpm;upRpm();
+
+/* 01b EX linearity band (schematic) */
+const lin=[],bu=[],bl=[];for(let i=0;i<=40;i++){const d=i*0.05;lin.push({x:d,y:4.6*Math.sin(Math.PI*d/1.35)*Math.exp(-0.15*d)});bu.push({x:d,y:6});bl.push({x:d,y:-6})}
+const cLin=new Chart($('#cLin'),{type:'line',data:{datasets:[
+ {label:'+6 µm',data:bu,borderColor:'#9aa1a8',borderWidth:1,pointRadius:0,fill:'+1',backgroundColor:C.band},
+ {label:'−6 µm',data:bl,borderColor:'#9aa1a8',borderWidth:1,pointRadius:0},
+ {label:'線性誤差（示意）',data:lin,borderColor:C.ex,borderWidth:2,pointRadius:0,tension:.3},
+ {label:'所選距離',data:[],borderColor:C.ex,backgroundColor:C.card,pointRadius:6,pointBorderWidth:2,showLine:false}
+]},options:{parsing:false,plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>c.dataset.label+'：'+c.parsed.y.toFixed(2)+' µm @ '+c.parsed.x.toFixed(2)+' mm'}}},
+ scales:{x:ax({type:'linear',min:0,max:2,title:{display:true,text:'目標距離 mm'}}),y:ax({min:-9,max:9,title:{display:true,text:'誤差 µm'}})}}});
+function upGap(){const d=+$('#gap').value;$('#gapO').textContent=d.toFixed(2)+' mm';
+ const y=4.6*Math.sin(Math.PI*d/1.35)*Math.exp(-0.15*d);cLin.data.datasets[3].data=[{x:d,y}];cLin.update('none');
+ $('#gapMsg').innerHTML=d<=1?'<span style="color:var(--good)">溫度特性 0.07%F.S./°C 適用</span>':'<span style="color:var(--warn)">＞1 mm：溫度特性條件不適用</span>'}
+$('#gap').oninput=upGap;upGap();
+
+/* 02 spec filter + response chart */
+$$('#specSeg button').forEach(b=>b.onclick=()=>{$$('#specSeg button').forEach(x=>x.classList.remove('on'));b.classList.add('on');const f=b.dataset.f;$$('#specT tbody tr').forEach(r=>r.classList.toggle('hide',f!=='all'&&r.dataset.c!==f))});
+new Chart($('#cResp'),{type:'bar',data:{labels:['EX-V 控制／類比輸出','GA 固態輸出','GA 繼電器輸出'],datasets:[{data:[0.075,1,10],backgroundColor:[C.ex,C.ga,C.ga],borderRadius:4,borderSkipped:'start',barThickness:22}]},
+ options:{indexAxis:'y',plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>c.parsed.x+' ms'}}},scales:{x:ax({type:'logarithmic',min:0.05,max:20,title:{display:true,text:'ms（對數）'},ticks:{callback:v=>[0.075,0.1,1,10].includes(+v.toFixed(3))?v+' ms':''}}),y:ax({grid:{display:false}})}}});
+
+/* 03 error budget */
+let mat='fe';
+const cErr=new Chart($('#cErr'),{type:'bar',data:{labels:['線性度','溫度漂移','解析度','夾具／安裝','RSS 合計','最壞相加'],datasets:[{data:[],backgroundColor:[],borderRadius:4,borderSkipped:'start',barThickness:24}]},
+ options:{indexAxis:'y',plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>'±'+c.parsed.x.toFixed(2)+' µm'}}},scales:{x:ax({beginAtZero:true,title:{display:true,text:'±µm'}}),y:ax({grid:{display:false}})}}});
+function upErr(){const dt=+$('#dt').value,wd=+$('#wd').value,fx=+$('#fx').value,T=+$('#tol').value;
+ $('#dtO').textContent=dt+' °C';$('#wdO').textContent=wd.toFixed(2)+' mm';$('#fxO').textContent=fx.toFixed(1)+' µm';$('#tolO').textContent='±'+T+' µm';
+ const L=6,Tm=1.4*dt,R=0.4,parts=[L,Tm,R,fx];const rss=Math.sqrt(parts.reduce((a,b)=>a+b*b,0)),wc=parts.reduce((a,b)=>a+b,0);
+ cErr.data.datasets[0].data=[L,Tm,R,fx,rss,wc];
+ cErr.data.datasets[0].backgroundColor=[C.ex,C.ex,C.ex,C.ex,C.ink,'#9aa1a8'];cErr.update();
+ $('#rss').textContent='±'+rss.toFixed(1)+' µm';$('#wc').textContent='±'+wc.toFixed(1)+' µm';const r=rss/T;$('#ratio').textContent=(r*100).toFixed(0)+'%';
+ const s=$('#stat');let cls,txt;
+ if(r<=.25){cls='good';txt='✔ 充裕：RSS ≤ 公差 1/4'}else if(r<=.5){cls='warn';txt='▲ 邊緣：需實測驗證'}else{cls='bad';txt='✖ 不建議：RSS > 公差 1/2'}
+ const flags=[];if(wd>1)flags.push('距離 >1 mm，溫漂條件不適用');if(mat==='ot')flags.push('非鐵材質，原廠未公開數值');
+ if(flags.length&&cls==='good'){cls='warn';txt='▲ 數值看似充裕，但條件不符'}
+ s.className='status '+cls;s.innerHTML=txt+(flags.length?'<br><span style="font-weight:600;font-size:12px">'+flags.join('；')+'</span>':'')}
+['#dt','#wd','#fx','#tol'].forEach(i=>$(i).oninput=upErr);
+$$('#mat button').forEach(b=>b.onclick=()=>{$$('#mat button').forEach(x=>x.classList.remove('on'));b.classList.add('on');mat=b.dataset.v;upErr()});
+upErr();
+
+/* 04 modes */
+const strip=$('#modeStrip');for(let i=1;i<=15;i++){const d=document.createElement('div');d.textContent=i<=4?['下死點','偏心','振動','間隙'][i-1]:'M'+String(i).padStart(2,'0');if(i<=4)d.className='k';d.title=i<=4?'已確認用途':'名稱請見使用手冊';strip.appendChild(d)}
+const MODES=[
+ {k:'bdc',name:'下死點／下止點',sub:'每個行程取最低點',use:'鉚接、沖壓下死點',src:'原廠應用頁'},
+ {k:'ecc',name:'偏心',sub:'每轉取峰對峰值',use:'ATC 刀具、齒輪偏心',src:'原廠應用頁'},
+ {k:'vib',name:'振動',sub:'取視窗內振幅 P-P',use:'主軸、機構微振動',src:'原廠應用頁'},
+ {k:'gap',name:'間隙',sub:'取平均距離',use:'治具浮起、間隙公差',src:'原比較頁'}];
+let mode='bdc',t=0,paused=false;const N=240;
+const mb=$('#modeBtns');MODES.forEach(m=>{const b=document.createElement('button');b.className='mbtn'+(m.k===mode?' on':'');b.innerHTML='<b>'+m.name+'</b><span>'+m.sub+' · 來源：'+m.src+'</span>';b.onclick=()=>{mode=m.k;$$('.mbtn').forEach(x=>x.classList.remove('on'));b.classList.add('on');buf.length=0;vals.length=0};mb.appendChild(b)});
+const buf=[],vals=[];
+function sig(tt){const f=+$('#fault').value/100;const n=(Math.random()-.5)*1.6;
+ switch(mode){
+  case 'bdc':{const ph=(tt%60)/60;const stroke=ph<.5?-40*Math.sin(Math.PI*ph*2):0;return stroke*(1+f*.5)+20+n}
+  case 'ecc':return (12+f*30)*Math.sin(2*Math.PI*tt/48)+n;
+  case 'vib':return (6+f*28)*Math.sin(2*Math.PI*tt/7)+2*Math.sin(2*Math.PI*tt/31)+n*1.5;
+  case 'gap':return 5+f*40+n*2;}}
+function extract(){const w=mode==='bdc'?60:mode==='ecc'?48:mode==='vib'?40:30;const s=buf.slice(-w).map(p=>p.y);if(!s.length)return 0;
+ if(mode==='bdc')return Math.min(...s);if(mode==='gap')return s.reduce((a,b)=>a+b,0)/s.length;return Math.max(...s)-Math.min(...s)}
+const cMode=new Chart($('#cMode'),{type:'line',data:{datasets:[
+ {label:'位移波形',data:buf,borderColor:C.ex,borderWidth:2,pointRadius:0,tension:.25},
+ {label:'判定值',data:vals,borderColor:C.ga,borderWidth:2,pointRadius:0,stepped:true},
+ {label:'上限',data:[],borderColor:'#9aa1a8',borderWidth:1.5,borderDash:[6,4],pointRadius:0},
+ {label:'下限',data:[],borderColor:'#9aa1a8',borderWidth:1.5,borderDash:[6,4],pointRadius:0}]},
+ options:{parsing:false,animation:false,interaction:{mode:'nearest',axis:'x',intersect:false},plugins:{legend:{display:false},tooltip:{callbacks:{title:()=>'',label:c=>c.dataset.label+'：'+c.parsed.y.toFixed(1)+' µm'}}},
+ scales:{x:ax({type:'linear',display:false}),y:ax({min:-70,max:70,title:{display:true,text:'µm（相對歸零點）'}})}}});
+function tick(){if(!paused){for(let k=0;k<2;k++){t++;buf.push({x:t,y:sig(t)});const v=extract();vals.push({x:t,y:v});if(buf.length>N){buf.shift();vals.shift()}}
+ const hi=+$('#hi').value,lo=+$('#lo').value;const x0=buf.length?buf[0].x:0,x1=t;
+ cMode.data.datasets[2].data=[{x:x0,y:hi},{x:x1,y:hi}];cMode.data.datasets[3].data=[{x:x0,y:lo},{x:x1,y:lo}];
+ cMode.options.scales.x.min=x0;cMode.options.scales.x.max=x1;cMode.update('none');
+ const v=vals.length?vals[vals.length-1].y:0;$('#mVal').textContent=v.toFixed(1)+' µm';const j=v>hi?'HIGH':v<lo?'LOW':'GO';const je=$('#mJudge');je.textContent=j;je.className='judge '+j;
+ $('#mUse').textContent=MODES.find(m=>m.k===mode).use}
+ requestAnimationFrame(tick)}
+requestAnimationFrame(tick);
+['#hi','#lo','#fault'].forEach(i=>$(i).oninput=()=>{$('#hiO').textContent=$('#hi').value+' µm';$('#loO').textContent=$('#lo').value+' µm';$('#faultO').textContent=$('#fault').value+'%'});
+$('#pause').onclick=()=>{paused=!paused;$('#pause').textContent=paused?'▶ 繼續':'⏸ 暫停'};
+
+/* 05 radar */
+const RAD=[['衝擊／碰撞警報',5,2,'GA 直接對應衝擊檢知；EX 需碰撞表現為可量的目標位移'],
+['定量位移量測',1,5,'GA 無位移規格；EX 有量程、線性度、解析度'],
+['靜態間隙監控',1,5,'GA 不量靜態距離；EX 可量金屬目標距離'],
+['金屬目標振動位移',3,5,'GA 量結構振動；EX 直接量指定目標相對位移'],
+['免設定目標間隙',5,2,'GA 不需建立探頭對目標的間隙；仍需可靠固定'],
+['上下限公差判定',2,5,'GA 偏靈敏度門檻；EX 有 HIGH/GO/LOW 與 4 組設定'],
+['油污環境感測頭',4,4,'GH-613 耐油＋IP67；EX-V 感測頭 IP67，實際油品需確認']];
+$('#radT').innerHTML=RAD.map(r=>'<tr><td style="font-weight:700">'+r[0]+'</td><td class="mono" style="color:var(--ga);font-weight:800">'+r[1]+'</td><td class="mono" style="color:var(--ex);font-weight:800">'+r[2]+'</td><td style="font-size:13px;color:var(--ink2)">'+r[3]+'</td></tr>').join('');
+const cRadar=new Chart($('#cRadar'),{type:'radar',data:{labels:RAD.map(r=>r[0]),datasets:[
+ {label:'GA-245＋GH-613',data:RAD.map(r=>r[1]),borderColor:C.ga,backgroundColor:'rgba(194,65,12,.12)',borderWidth:2,pointRadius:5,pointBackgroundColor:C.ga,pointBorderColor:C.card,pointBorderWidth:2},
+ {label:'EX-V02＋EX-110V',data:RAD.map(r=>r[2]),borderColor:C.ex,backgroundColor:'rgba(29,111,163,.12)',borderWidth:2,pointRadius:5,pointBackgroundColor:C.ex,pointBorderColor:C.card,pointBorderWidth:2,pointStyle:'rectRot'}]},
+ options:{plugins:{legend:{position:'top'}},scales:{r:{min:0,max:5,ticks:{stepSize:1,backdropColor:'transparent',color:C.muted},grid:{color:C.grid},angleLines:{color:C.grid},pointLabels:{color:C.ink,font:{size:12,weight:'600'}}}}}});
+$$('#radSeg button').forEach(b=>b.onclick=()=>{$$('#radSeg button').forEach(x=>x.classList.remove('on'));b.classList.add('on');const v=b.dataset.v;cRadar.setDatasetVisibility(0,v!=='ex');cRadar.setDatasetVisibility(1,v!=='ga');cRadar.update()});
+
+/* 06 selector */
+const Q=[
+ {id:'goal',t:'1. 你要的輸出是？',o:[['event','異常事件警報（有／無）'],['value','位移數值（µm）'],['both','兩者都要']]},
+ {id:'tgt',t:'2. 被測目標是？',o:[['metal','導電金屬'],['non','塑膠／玻璃／陶瓷'],['struct','沒有特定目標，只看設備']]},
+ {id:'freq',t:'3. 主要關心的頻率／轉速？',o:[['low','低頻（< 40 Hz，如 1,800 rpm 以下的 1 倍轉頻）'],['mid','衝擊、40 Hz–8 kHz'],['static','靜態或緩慢變化']]},
+ {id:'pwr',t:'4. 控制櫃可用電源？',o:[['ac','有 AC 100–240 V'],['dc','只有 24 VDC'],['both','兩者都有']]}];
+const A={};
+$('#quiz').innerHTML='<h4>選型問答</h4>'+Q.map(q=>'<div class="q"><div class="qt">'+q.t+'</div><div class="opts" data-q="'+q.id+'">'+q.o.map(o=>'<button data-v="'+o[0]+'">'+o[1]+'</button>').join('')+'</div></div>').join('');
+$$('#quiz .opts').forEach(g=>g.querySelectorAll('button').forEach(b=>b.onclick=()=>{g.querySelectorAll('button').forEach(x=>x.classList.remove('on'));b.classList.add('on');A[g.dataset.q]=b.dataset.v;decide()}));
+function decide(){let ga=0,ex=0;const why=[],warn=[];
+ if(A.goal==='event'){ga+=3;why.push('只要異常／正常的 ON/OFF 輸出：GA 用門檻即可完成。')}
+ if(A.goal==='value'){ex+=3;why.push('要有單位的位移值：EX-V 有量程、線性度與 ±5 V 類比輸出。')}
+ if(A.goal==='both'){ga+=2;ex+=2;why.push('事件與數值都要：兩組量不同物理量，分別安裝。')}
+ if(A.tgt==='metal'){ex+=1;why.push('導電金屬目標符合 EX-V 原理；鐵材以外要先確認精度。')}
+ if(A.tgt==='non'){ex-=4;warn.push('非導電目標：EX-V 無法直接量，需貼金屬片或改用雷射等其他原理。')}
+ if(A.tgt==='struct'){ga+=1;ex-=1;why.push('只看設備本體：GA 裝在結構上即可，不需目標物。')}
+ if(A.freq==='low'){ga-=2;warn.push('低於 40 Hz 不在 GA 標示頻帶；低頻不平衡要另配振動分析儀，或用 EX-V 直接量軸的位移。');ex+=1}
+ if(A.freq==='mid'){ga+=1;why.push('衝擊與 40 Hz–8 kHz 成分落在 GA 頻帶內。')}
+ if(A.freq==='static'){ex+=2;ga-=2;why.push('靜態或緩慢變化：GA 無靜態量測能力，EX-V 可量靜態間隙。')}
+ if(A.pwr==='dc'){if(ga>0)warn.push('GA-245U 需要 AC 110–240 V，只有 24 VDC 時要另配電源。');ga-=1}
+ if(A.pwr==='ac'&&ex>0)warn.push('EX-V 需要 24 VDC 電源。');
+ const r=$('#rec');const n=Object.keys(A).length;let cls,who;
+ if(A.tgt==='non'&&A.goal!=='event'){cls='none';who='兩者都不是首選'}
+ else if(A.goal==='both'&&ga>0&&ex>0){cls='both';who='兩組並用'}
+ else if(ga>ex){cls='ga';who='GA-245＋GH-613'}else if(ex>ga){cls='ex';who='EX-V02＋EX-110V'}else{cls='none';who='條件不足，請繼續作答'}
+ const tot=Math.max(1,Math.max(ga,0)+Math.max(ex,0)),pg=Math.max(ga,0)/tot*100;
+ r.className='rec '+cls;
+ r.innerHTML='<div style="font-size:12px;color:var(--muted)">已回答 '+n+'/4</div><div class="who" style="color:'+(cls==='ga'?C.ga:cls==='ex'?C.ex:C.ink)+'">'+who+'</div>'+
+  '<div class="bar2"><i style="width:'+pg+'%;background:'+C.ga+'"></i><i style="width:'+(100-pg)+'%;background:'+C.ex+'"></i></div><div class="legend" style="font-size:12px"><span><i style="background:'+C.ga+'"></i>GA 傾向 '+Math.max(ga,0)+'</span><span><i style="background:'+C.ex+'"></i>EX-V 傾向 '+Math.max(ex,0)+'</span></div>'+
+  (why.length?'<ul style="margin:6px 0;padding-left:20px;color:var(--ink2);font-size:14px">'+why.map(w=>'<li>'+w+'</li>').join('')+'</ul>':'')+
+  (warn.length?'<div class="note red">'+warn.join('<br>')+'</div>':'')}
+
+/* 07 app filter */
+$$('#appSeg button').forEach(b=>b.onclick=()=>{$$('#appSeg button').forEach(x=>x.classList.remove('on'));b.classList.add('on');const f=b.dataset.f;$$('#appT tbody tr').forEach(r=>r.classList.toggle('hide',f!=='all'&&r.dataset.c!==f))});
+window.addEventListener('beforeprint',()=>{paused=true});
+
+/* 08 XYZ sync + velocity simulation */
+const DT=0.1,NS=300,F1=100,F2=200; /* 0.1 ms 取樣，30 ms 視窗 */
+const fx_=t=>20*Math.sin(2*Math.PI*F1*t/1000), fy_=t=>15*Math.sin(2*Math.PI*F1*t/1000+Math.PI/2), fz_=t=>8*Math.sin(2*Math.PI*F2*t/1000)+5;
+const dfx=t=>20*2*Math.PI*F1*Math.cos(2*Math.PI*F1*t/1000)/1000, dfy=t=>-15*2*Math.PI*F1*Math.sin(2*Math.PI*F1*t/1000+Math.PI/2)/1000, dfz=t=>8*2*Math.PI*F2*Math.cos(2*Math.PI*F2*t/1000)/1000; /* µm/ms = mm/s */
+let seed=7;const rnd=()=>{seed=(seed*16807)%2147483647;return seed/2147483647};
+const gauss=()=>{let u=0;for(let i=0;i<6;i++)u+=rnd();return (u-3)*0.42};
+const noise=[[],[],[]];for(let i=0;i<NS;i++)for(let k=0;k<3;k++)noise[k].push(gauss());
+let useFilt=true;
+const COL={x:'#c2410c',y:'#4d7c0f',z:'#1d6fa3'};
+const cXYZ=new Chart($('#cXYZ'),{type:'line',data:{datasets:[
+ {label:'x',data:[],borderColor:COL.x,borderWidth:2,pointRadius:0},
+ {label:'y',data:[],borderColor:COL.y,borderWidth:2,pointRadius:0},
+ {label:'z',data:[],borderColor:COL.z,borderWidth:2,pointRadius:0},
+ {label:'|d|',data:[],borderColor:C.ink,borderWidth:2,pointRadius:0}]},
+ options:{parsing:false,animation:false,interaction:{mode:'index',intersect:false},plugins:{legend:{display:false},tooltip:{callbacks:{title:i=>i[0].parsed.x.toFixed(1)+' ms',label:c=>c.dataset.label+'：'+c.parsed.y.toFixed(2)+' µm'}}},
+ scales:{x:ax({type:'linear',min:0,max:30,title:{display:true,text:'時間 ms'}}),y:ax({title:{display:true,text:'µm'}})}}});
+const cVel=new Chart($('#cVel'),{type:'line',data:{datasets:[
+ {label:'計算 |v|',data:[],borderColor:C.ink,borderWidth:1.5,pointRadius:0},
+ {label:'真實 |v|',data:[],borderColor:'#9aa1a8',borderWidth:2,borderDash:[6,4],pointRadius:0}]},
+ options:{parsing:false,animation:false,interaction:{mode:'index',intersect:false},plugins:{legend:{display:false},tooltip:{callbacks:{title:i=>i[0].parsed.x.toFixed(1)+' ms',label:c=>c.dataset.label+'：'+c.parsed.y.toFixed(2)+' mm/s'}}},
+ scales:{x:ax({type:'linear',min:0,max:30,title:{display:true,text:'時間 ms'}}),y:ax({min:0,title:{display:true,text:'mm/s'}})}}});
+const smooth=(a,w)=>a.map((_,i)=>{let s=0,n=0;for(let j=i-w;j<=i+w;j++)if(j>=0&&j<a.length){s+=a[j];n++}return s/n});
+function upXYZ(){const sk=+$('#skew').value;$('#skewO').textContent=sk.toFixed(1)+' ms';
+ const T=[],X=[],Y=[],Z=[];for(let i=0;i<NS;i++){const t=i*DT;T.push(t);X.push(fx_(t)+noise[0][i]);Y.push(fy_(t-sk)+noise[1][i]);Z.push(fz_(t)+noise[2][i])}
+ const mag=T.map((t,i)=>Math.hypot(X[i],Y[i],Z[i]));let mErr=0;T.forEach((t,i)=>{mErr=Math.max(mErr,Math.abs(mag[i]-Math.hypot(fx_(t),fy_(t),fz_(t))))});
+ cXYZ.data.datasets[0].data=T.map((t,i)=>({x:t,y:X[i]}));cXYZ.data.datasets[1].data=T.map((t,i)=>({x:t,y:Y[i]}));cXYZ.data.datasets[2].data=T.map((t,i)=>({x:t,y:Z[i]}));cXYZ.data.datasets[3].data=T.map((t,i)=>({x:t,y:mag[i]}));cXYZ.update('none');
+ const w=useFilt?4:0;const Xs=smooth(X,w),Ys=smooth(Y,w),Zs=smooth(Z,w);
+ const V=[],Vt=[];let se=0,n=0,pk=0;for(let i=1;i<NS-1;i++){const t=T[i];const vx=(Xs[i+1]-Xs[i-1])/(2*DT),vy=(Ys[i+1]-Ys[i-1])/(2*DT),vz=(Zs[i+1]-Zs[i-1])/(2*DT);const v=Math.hypot(vx,vy,vz),vt=Math.hypot(dfx(t),dfy(t),dfz(t));V.push({x:t,y:v});Vt.push({x:t,y:vt});pk=Math.max(pk,vt);if(i>w&&i<NS-1-w){se+=(v-vt)**2;n++}}
+ cVel.data.datasets[0].data=V;cVel.data.datasets[1].data=Vt;cVel.update('none');
+ $('#skErr').textContent=mErr.toFixed(2)+' µm';$('#vErr').textContent=Math.sqrt(se/n).toFixed(2)+' mm/s';$('#vPk').textContent=pk.toFixed(1)+' mm/s'}
+$('#skew').oninput=upXYZ;
+$$('#filtSeg button').forEach(b=>b.onclick=()=>{$$('#filtSeg button').forEach(x=>x.classList.remove('on'));b.classList.add('on');useFilt=b.dataset.v==='1';upXYZ()});
+upXYZ();
+
+/* 09 3D trajectory viewer (vanilla canvas, drag to rotate) */
+const tw=$('#trajWrap'),tc=$('#cTraj'),tx=tc.getContext('2d');
+let yaw=-0.7,pitch=0.45,trajMode='orbit',tph=0,drag=null;
+function trajPts(){const P=[];for(let i=0;i<=360;i++){const a=i/360*2*Math.PI*3;let x,y,z;
+ if(trajMode==='orbit'){x=22*Math.cos(a);y=14*Math.sin(a);z=0.5*Math.sin(3*a)}
+ else if(trajMode==='axial'){x=22*Math.cos(a);y=14*Math.sin(a);z=12*Math.sin(a/3)}
+ else{x=18*Math.cos(a)+i*0.05;y=12*Math.sin(a)+i*0.03;z=i*0.08-14}P.push([x,y,z])}return P}
+let TP=trajPts();
+function proj(p,W,H,s){const [x,y,z]=p;const cx=Math.cos(yaw),sx=Math.sin(yaw),cp=Math.cos(pitch),sp=Math.sin(pitch);
+ const X=x*cx-y*sx,Y=x*sx+y*cx;const Z2=z*cp-Y*sp,D=Y*cp+z*sp;return [W/2+X*s,H/2-Z2*s,D]}
+function drawTraj(){const r=tw.getBoundingClientRect(),dpr=window.devicePixelRatio||1;const W=r.width,H=r.height;
+ if(tc.width!==Math.round(W*dpr)||tc.height!==Math.round(H*dpr)){tc.width=Math.round(W*dpr);tc.height=Math.round(H*dpr);tc.style.width=W+'px';tc.style.height=H+'px'}
+ tx.setTransform(dpr,0,0,dpr,0,0);tx.clearRect(0,0,W,H);const s=Math.min(W,H)/80;
+ const L=30,axes=[[[L,0,0],'#c2410c','X'],[[0,L,0],'#4d7c0f','Y'],[[0,0,L],'#1d6fa3','Z']];
+ /* grid on XY plane */
+ tx.strokeStyle='#e6e0d2';tx.lineWidth=1;for(let g=-30;g<=30;g+=10){let a=proj([g,-30,-20],W,H,s),b=proj([g,30,-20],W,H,s);tx.beginPath();tx.moveTo(a[0],a[1]);tx.lineTo(b[0],b[1]);tx.stroke();a=proj([-30,g,-20],W,H,s);b=proj([30,g,-20],W,H,s);tx.beginPath();tx.moveTo(a[0],a[1]);tx.lineTo(b[0],b[1]);tx.stroke()}
+ const o=proj([0,0,0],W,H,s);
+ axes.forEach(([v,c,n])=>{const e=proj(v,W,H,s);tx.strokeStyle=c;tx.lineWidth=2;tx.beginPath();tx.moveTo(o[0],o[1]);tx.lineTo(e[0],e[1]);tx.stroke();tx.fillStyle=c;tx.font='bold 13px monospace';tx.fillText(n+' (µm)',e[0]+4,e[1]-4)});
+ tx.strokeStyle='#16181b';tx.lineWidth=1.6;tx.beginPath();TP.forEach((p,i)=>{const q=proj(p,W,H,s);i?tx.lineTo(q[0],q[1]):tx.moveTo(q[0],q[1])});tx.stroke();
+ const k=Math.floor(tph)%TP.length,cur=TP[k],q=proj(cur,W,H,s);
+ tx.strokeStyle='#b3261e';tx.lineWidth=2.5;tx.beginPath();tx.moveTo(o[0],o[1]);tx.lineTo(q[0],q[1]);tx.stroke();
+ tx.fillStyle='#fffdf8';tx.strokeStyle='#b3261e';tx.lineWidth=2;tx.beginPath();tx.arc(q[0],q[1],5,0,7);tx.fill();tx.stroke();
+ tx.fillStyle='#16181b';tx.font='12px monospace';
+ tx.fillText('d = ['+cur.map(v=>v.toFixed(1)).join(', ')+'] µm',10,18);tx.fillText('|d| = '+Math.hypot(...cur).toFixed(1)+' µm',10,34)}
+function trajLoop(){if(!drag)tph+=0.6;drawTraj();requestAnimationFrame(trajLoop)}
+tw.addEventListener('pointerdown',e=>{drag={x:e.clientX,y:e.clientY,yaw,pitch};tw.setPointerCapture(e.pointerId);tw.style.cursor='grabbing'});
+tw.addEventListener('pointermove',e=>{if(!drag)return;yaw=drag.yaw+(e.clientX-drag.x)*0.01;pitch=Math.max(-1.4,Math.min(1.4,drag.pitch+(e.clientY-drag.y)*0.01))});
+tw.addEventListener('pointerup',()=>{drag=null;tw.style.cursor='grab'});
+$$('#trajSeg button').forEach(b=>b.onclick=()=>{$$('#trajSeg button').forEach(x=>x.classList.remove('on'));b.classList.add('on');trajMode=b.dataset.v;TP=trajPts();tph=0});
+requestAnimationFrame(trajLoop);
+
+/* 09 vector calculator */
+function upVec(){const x=+$('#vx').value,y=+$('#vy').value,z=+$('#vz').value;
+ $('#vxO').textContent=(x>=0?'+':'')+x.toFixed(1)+' µm';$('#vyO').textContent=(y>=0?'+':'')+y.toFixed(1)+' µm';$('#vzO').textContent=(z>=0?'+':'')+z.toFixed(1)+' µm';
+ const m=Math.hypot(x,y,z);$('#vMag').textContent=m.toFixed(1)+' µm';
+ const ang=v=>m?(Math.acos(v/m)*180/Math.PI).toFixed(1)+'°':'—';
+ $('#vAng').textContent='α(X) '+ang(x)+'　β(Y) '+ang(y)+'　γ(Z) '+ang(z)+'　＝ '+(m/1000).toFixed(4)+' mm'}
+['#vx','#vy','#vz'].forEach(i=>$(i).oninput=upVec);upVec();
+
+/* 10 spacing checker */
+function upSp(){const d=+$('#sp').value,sync=$('#spSync').checked;$('#spO').textContent=d+' mm';
+ const S=4,cx=260,xa=cx-d*S/2,xb=cx+d*S/2,hw=5*S,ok=d>30;
+ const head=(x,id)=>{$(id).innerHTML='<ellipse cx="'+x+'" cy="150" rx="'+(16*S/2)+'" ry="22" fill="'+(ok?'rgba(29,111,163,.10)':'rgba(179,38,30,.10)')+'" stroke="'+(ok?'#1d6fa3':'#b3261e')+'" stroke-dasharray="4 3"/>'+
+  '<rect x="'+(x-hw)+'" y="70" width="'+(hw*2)+'" height="72" fill="#1d6fa3" stroke="#16181b"/><line x1="'+x+'" y1="40" x2="'+x+'" y2="70" stroke="#16181b" stroke-width="2"/>'+
+  '<text x="'+(x-22)+'" y="34" font-size="11" font-family="monospace">EX-110V</text>'};
+ head(xa,'#spA');head(xb,'#spB');
+ $('#spDim').innerHTML='<line x1="'+xa+'" y1="56" x2="'+xb+'" y2="56" stroke="#16181b"/><line x1="'+xa+'" y1="50" x2="'+xa+'" y2="62" stroke="#16181b"/><line x1="'+xb+'" y1="50" x2="'+xb+'" y2="62" stroke="#16181b"/><text x="'+(cx-22)+'" y="52" font-size="12" font-weight="700" font-family="monospace">'+d+' mm</text>'+
+  '<line x1="'+(cx-15*S)+'" y1="185" x2="'+(cx+15*S)+'" y2="185" stroke="#b3261e" stroke-width="2"/><text x="'+(cx+15*S+6)+'" y="188" font-size="10.5" fill="#b3261e">30 mm 門檻</text>';
+ const st=$('#spStat');
+ if(ok){st.className='status good';st.textContent='✔ 中心距 > 30 mm，符合手冊並排間距'}
+ else if(sync){st.className='status warn';st.textContent='▲ 低於 30 mm，已用 SYNC 交替激勵：必須實測確認輸出穩定'}
+ else{st.className='status bad';st.textContent='✖ 低於 30 mm：可能互相干擾、輸出不正確'}}
+$('#sp').oninput=upSp;$('#spSync').onchange=upSp;upSp();
+
+/* 11 accelerometer selection helper */
+let acApp='mon',acDist='near';
+const AC={mon:['三軸 IEPE 加速度計＋振動監測器／DAQ','長期趨勢監控，搭配振動監測器或 DAQ 記錄 RMS、峰值'],
+ alarm:['三軸加速度計＋PLC 類比輸入＋門檻邏輯','只需警報時，不必上頻譜分析；若單軸即可，GA-245＋GH-613 也是選項'],
+ diag:['三軸 IEPE＋高速 DAQ＋FFT／包絡分析','軸承、齒輪、聯軸器的特徵頻率需要波形與頻譜'],
+ harsh:['高溫型或防爆型三軸加速度計','確認耐溫、ATEX／IECEx，以及纜線與放大器規格'],
+ imu:['IMU：三軸加速度計＋三軸陀螺儀','姿態角、傾斜、角速度不是單純加速度計能給的；必要時加三軸磁力計']};
+function upAc(){const g=+$('#gIn').value,hz=+$('#hzIn').value;$('#gO').textContent=g+' g';$('#hzO').textContent=hz+' Hz';
+ const need=g*2;const rng=need<=10?'≥ 10 g':need<=50?'≥ 50 g':need<=100?'≥ 100 g':'≥ '+(Math.ceil(need/100)*100)+' g（衝擊型）';
+ const out=acDist==='far'?'4–20 mA（長距離抗干擾）':(acApp==='diag'||hz>5000?'IEPE／ICP（高頻分析）':'IEPE／ICP');
+ const mount=hz>5000?'螺絲固定（高頻必須）':'螺絲固定；巡檢可用磁座';
+ const [cfg,why]=AC[acApp];const warn=[];
+ if(acDist==='far'&&acApp==='diag')warn.push('4–20 mA 通常只輸出整體振動值，若要 FFT／包絡分析，需要 IEPE 原始波形，請把擷取設備移近感測器');
+ if(hz>5000&&acApp!=='diag')warn.push('超過 5 kHz 時安裝剛性影響很大，磁座可能限制可用頻寬');
+ $('#acRec').innerHTML='<div style="font-size:12px;color:var(--muted)">建議配置</div><div class="who" style="font-size:18px;color:var(--ink)">'+cfg+'</div><p style="color:var(--ink2);margin:4px 0 8px;font-size:13.5px">'+why+'</p>'+
+  '<table style="font-size:13px"><tbody><tr><th>量程</th><td class="mono">'+rng+'</td></tr><tr><th>頻寬</th><td class="mono">上限 ≥ '+hz+' Hz</td></tr><tr><th>輸出</th><td>'+out+'</td></tr><tr><th>安裝</th><td>'+mount+'</td></tr><tr><th>環境</th><td>'+(acApp==='harsh'?'高溫型／ATEX、IECEx':'IP67／IP68、耐油（濕製程需確認）')+'</td></tr></tbody></table>'+
+  (warn.length?'<div class="note red">'+warn.join('<br>')+'</div>':'')}
+$$('#acApp button').forEach(b=>b.onclick=()=>{$$('#acApp button').forEach(x=>x.classList.remove('on'));b.classList.add('on');acApp=b.dataset.v;upAc()});
+$$('#acDist button').forEach(b=>b.onclick=()=>{$$('#acDist button').forEach(x=>x.classList.remove('on'));b.classList.add('on');acDist=b.dataset.v;upAc()});
+['#gIn','#hzIn'].forEach(i=>$(i).oninput=upAc);upAc();
+
+/* 12a differential capacitor */
+const D0=1,KX=0.04;const capCurve=[];for(let a=-8;a<=8.001;a+=0.25){const x=a*KX;capCurve.push({x:a,y:1/(D0-x)-1/(D0+x)})}
+const cCap=new Chart($('#cCap'),{type:'line',data:{datasets:[
+ {label:'ΔC',data:capCurve,borderColor:C.ex,borderWidth:2,pointRadius:0},
+ {label:'線性參考',data:[{x:-8,y:-8*KX*2},{x:8,y:8*KX*2}],borderColor:'#9aa1a8',borderWidth:1,borderDash:[5,4],pointRadius:0},
+ {label:'目前',data:[],borderColor:C.ga,backgroundColor:C.card,pointRadius:6,pointBorderWidth:2,showLine:false}]},
+ options:{parsing:false,plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>c.dataset.label+'：'+c.parsed.y.toFixed(3)+' @ '+c.parsed.x.toFixed(1)+' g'}}},
+ scales:{x:ax({type:'linear',min:-8,max:8,title:{display:true,text:'加速度 g'}}),y:ax({title:{display:true,text:'ΔC（相對）'}})}}});
+function upCap(){const a=+$('#capA').value,x=a*KX,c1=1/(D0-x),c2=1/(D0+x);
+ $('#capAO').textContent=(a>=0?'+':'')+a.toFixed(1)+' g';
+ const px=260+a*16;$('#capMass').innerHTML='<line x1="140" y1="80" x2="'+(px-80)+'" y2="80" stroke="#16181b" stroke-width="1.5" stroke-dasharray="3 3"/><line x1="'+(px+80)+'" y1="80" x2="380" y2="80" stroke="#16181b" stroke-width="1.5" stroke-dasharray="3 3"/><rect x="'+(px-80)+'" y="45" width="160" height="70" fill="#c2410c"/><text x="'+(px-38)+'" y="85" font-size="13" fill="#fff" font-weight="700">檢驗質量</text>'+
+  '<line x1="114" y1="122" x2="'+(px-80)+'" y2="122" stroke="#1d6fa3" stroke-width="2"/><line x1="'+(px+80)+'" y1="122" x2="406" y2="122" stroke="#1d6fa3" stroke-width="2"/>';
+ $('#capX').textContent=(x>=0?'+':'')+x.toFixed(3);$('#capC').textContent=c1.toFixed(3)+' / '+c2.toFixed(3);$('#capD').textContent=(c1-c2>=0?'+':'')+(c1-c2).toFixed(3);
+ cCap.data.datasets[2].data=[{x:a,y:c1-c2}];cCap.update('none')}
+$('#capA').oninput=upCap;upCap();
+
+/* 12b tilt & gravity */
+const cTilt=new Chart($('#cTilt'),{type:'bar',data:{labels:['加速度計 X','加速度計 Z','陀螺儀（角速度）'],datasets:[{data:[0,0,0],backgroundColor:[C.ga,C.ga,C.ex],borderRadius:4,borderSkipped:'start',barThickness:24}]},
+ options:{indexAxis:'y',plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>c.dataIndex<2?c.parsed.x.toFixed(3)+' g':'0 °/s（靜止）'}}},scales:{x:ax({min:-1.1,max:1.1,title:{display:true,text:'加速度計單位 g；陀螺儀靜止為 0'}}),y:ax({grid:{display:false}})}}});
+function upTilt(){const t=+$('#tilt').value,r=t*Math.PI/180;$('#tiltO').textContent=t+'°';cTilt.data.datasets[0].data=[Math.sin(r),Math.cos(r),0];cTilt.update()}
+$('#tilt').oninput=upTilt;upTilt();
+
+/* 12c gyro drift vs fusion */
+const DTs=0.1,NT=600;let sd=11;const r2=()=>{sd=(sd*16807)%2147483647;return sd/2147483647};const gn=()=>{let u=0;for(let i=0;i<6;i++)u+=r2();return (u-3)*0.82};
+const gN=[],aN=[];for(let i=0;i<NT;i++){gN.push(gn()*0.3);aN.push(gn()*2.5)}
+const cDrift=new Chart($('#cDrift'),{type:'line',data:{datasets:[
+ {label:'陀螺儀積分',data:[],borderColor:C.ex,borderWidth:2,pointRadius:0},
+ {label:'加速度計',data:[],borderColor:C.ga,borderWidth:1,pointRadius:0},
+ {label:'融合',data:[],borderColor:C.ink,borderWidth:2,pointRadius:0}]},
+ options:{parsing:false,animation:false,interaction:{mode:'index',intersect:false},plugins:{legend:{display:false},tooltip:{callbacks:{title:i=>i[0].parsed.x.toFixed(1)+' s',label:c=>c.dataset.label+'：'+c.parsed.y.toFixed(2)+'°'}}},
+ scales:{x:ax({type:'linear',min:0,max:60,title:{display:true,text:'時間 s'}}),y:ax({title:{display:true,text:'估計角度 °（真實 0°）'}})}}});
+function upDrift(){const b=+$('#bias').value;$('#biasO').textContent=b.toFixed(2)+' °/s';
+ let g=0,f=0;const G=[],A=[],F=[];for(let i=0;i<NT;i++){const t=i*DTs,w=b+gN[i];g+=w*DTs;const acc=aN[i];f=0.98*(f+w*DTs)+0.02*acc;G.push({x:t,y:g});A.push({x:t,y:acc});F.push({x:t,y:f})}
+ cDrift.data.datasets[0].data=G;cDrift.data.datasets[1].data=A;cDrift.data.datasets[2].data=F;cDrift.update('none')}
+$('#bias').oninput=upDrift;upDrift();
+
+/* 12d FAQ */
+const FAQ=[['加速度計可以在沒有陀螺儀的情況下工作嗎？','可以。單獨使用能檢測運動和傾斜，但沒有陀螺儀就無法準確追蹤旋轉或方向變化。'],
+['陀螺儀可以在沒有加速度計的情況下工作嗎？','可以，但不太可靠。陀螺儀能追蹤旋轉，但長期下來若沒有加速度計資料校正，可能會漂移（見上方模擬）。'],
+['為什麼手機同時使用加速度計和陀螺儀？','兩者並用能更準確地追蹤運動與方向，特別是遊戲、導航和螢幕旋轉。'],
+['加速度計量的是速度還是距離？','都不是。加速度計量加速度，速度和距離是之後處理加速度資料算出來的。'],
+['MEMS 感測器的導航精度夠嗎？','短期導航夠準確，長期導航通常需要 GPS 或其他參考系統。'],
+['什麼是感測器融合？','把多個感測器的資料結合起來，以提高準確度、減少誤差。']];
+$('#faq').innerHTML=FAQ.map((q,i)=>'<details style="border-bottom:1px solid var(--line);padding:7px 0"'+(i===0?' open':'')+'><summary style="cursor:pointer;font-weight:700;font-size:14px">'+q[0]+'</summary><p style="margin:6px 0 2px;font-size:13.5px;color:var(--ink2)">'+q[1]+'</p></details>').join('');
+</script>
+</body>
+</html>
